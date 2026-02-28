@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kost Garcia Putri — Pendaftaran Penghuni</title>
+<meta name="description" content="Formulir pendaftaran penghuni Kost Garcia Putri, Tangerang Selatan">
+<meta name="theme-color" content="#1a1040">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ─── TOKENS ─── */
+:root{
+  --p:#5b4fcf;--p2:#7c6fe0;--p3:#3730a3;
+  --g:#059669;--g2:#d1fae5;--g3:#a7f3d0;
+  --a:#d97706;--a2:#fef3c7;
+  --r:#dc2626;--r2:#fee2e2;
+  --sky:#0284c7;--sky2:#e0f2fe;
+  --ink:#0c0a1e;--ink2:#2d2b52;--ink3:#64627a;
+  --mist:#f5f4fa;--mist2:#ede9f8;--mist3:#ddd8f3;
+  --white:#fff;--border:#e4e0f5;
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Outfit',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 2px 16px rgba(91,79,207,0.08);
+  --shadow-md:0 8px 32px rgba(91,79,207,0.14);
+  --shadow-lg:0 20px 60px rgba(91,79,207,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink2);background:var(--white);min-height:100dvh;overflow-x:hidden}
+input,select,textarea,button{font-family:var(--sans)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--mist)}
+::-webkit-scrollbar-thumb{background:var(--mist3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--p2)}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ─── SCREENS ─── */
+.screen{display:none!important}
+.screen.on{display:block!important}
+#sHome.on{display:flex!important}
+#sAdminLogin.on{display:flex!important}
+#sAdmin.on{display:flex!important}
+
+/* ═══════════════════════════════════════════════
+   HOME — LANDING PAGE UNTUK PENGHUNI
+═══════════════════════════════════════════════ */
+#sHome{
+  min-height:100dvh;
+  background:radial-gradient(ellipse 120% 80% at 50% -10%,#2e1f78 0%,#1a1040 55%,#0d0820 100%);
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;position:relative;overflow:hidden;
+}
+/* Animated orbs */
+.orb{position:absolute;border-radius:50%;pointer-events:none;animation:orbFloat 8s ease-in-out infinite}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(124,111,224,.25),transparent 70%);top:-100px;right:-80px;animation-delay:0s}
+.orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(91,79,207,.2),transparent 70%);bottom:-60px;left:-60px;animation-delay:3s}
+.orb3{width:200px;height:200px;background:radial-gradient(circle,rgba(16,185,129,.15),transparent 70%);top:40%;left:10%;animation-delay:5s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-20px) scale(1.05)}}
+
+.homeInner{
+  position:relative;z-index:2;width:100%;max-width:520px;
+  display:flex;flex-direction:column;align-items:center;gap:32px;
+}
+.homeHeader{text-align:center}
+.homeLogo{
+  width:88px;height:88px;border-radius:24px;
+  background:linear-gradient(135deg,#7c6fe0,#5b4fcf);
+  display:inline-flex;align-items:center;justify-content:center;font-size:40px;
+  box-shadow:0 12px 48px rgba(91,79,207,.5),0 0 0 1px rgba(255,255,255,.1);
+  margin-bottom:20px;overflow:hidden;
+  animation:logoIn .6s cubic-bezier(.16,1,.3,1);
+}
+.homeLogo img{width:100%;height:100%;object-fit:cover;border-radius:24px}
+@keyframes logoIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.homeKostName{
+  font-family:var(--serif);font-size:clamp(28px,5vw,40px);color:#fff;
+  font-weight:600;letter-spacing:-.5px;margin-bottom:8px;
+  animation:fadeUp .6s .1s both;
+}
+.homeAddr{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;animation:fadeUp .6s .2s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Mode cards */
+.modeCards{width:100%;display:flex;flex-direction:column;gap:12px;animation:fadeUp .6s .3s both}
+.modeCard{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius-lg);padding:20px 22px;cursor:pointer;
+  transition:all .3s cubic-bezier(.16,1,.3,1);
+  display:flex;align-items:center;gap:18px;backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.modeCard:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.35)}
+.modeCard:active{transform:translateY(-1px)}
+.modeCardIcon{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;
+}
+.modeCardBody{flex:1;min-width:0}
+.modeCardTitle{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px}
+.modeCardDesc{font-size:12px;color:rgba(255,255,255,.5);line-height:1.5}
+.modeCardTag{
+  display:inline-block;margin-top:8px;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+}
+.modeCardArrow{color:rgba(255,255,255,.25);font-size:20px;flex-shrink:0}
+
+/* Stats strip */
+.homeStats{
+  display:flex;gap:0;width:100%;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;
+  animation:fadeUp .6s .4s both;
+}
+.homeStat{flex:1;text-align:center;padding:14px 10px;border-right:1px solid rgba(255,255,255,.06)}
+.homeStat:last-child{border-right:none}
+.homeStatVal{font-size:20px;font-weight:800;color:#fff}
+.homeStatLabel{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;font-weight:500}
+
+/* Share link box */
+.shareLinkBox{
+  width:100%;animation:fadeUp .6s .5s both;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius);padding:14px 16px;
+}
+.shareLinkTitle{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+.shareLinkRow{display:flex;gap:8px;align-items:center}
+.shareLinkUrl{
+  flex:1;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:8px 12px;font-family:var(--mono);font-size:11px;
+  color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.btnCopy{
+  padding:8px 14px;border-radius:8px;border:none;
+  background:rgba(91,79,207,.4);color:#fff;font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.btnCopy:hover{background:rgba(91,79,207,.7)}
+.btnCopy.copied{background:rgba(5,150,105,.4);color:#6ee7b7}
+.shareWARow{margin-top:8px}
+.btnShareWA{
+  width:100%;padding:9px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,rgba(37,211,102,.25),rgba(18,140,126,.25));
+  border:1px solid rgba(37,211,102,.2);color:rgba(255,255,255,.8);
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btnShareWA:hover{background:linear-gradient(135deg,rgba(37,211,102,.4),rgba(18,140,126,.4));border-color:rgba(37,211,102,.4)}
+
+/* ═══════════════════════════════════════════════
+   FORMULIR PENGHUNI — FULL PAGE
+═══════════════════════════════════════════════ */
+#sForm{min-height:100dvh;background:var(--mist);flex-direction:column}
+#sForm.on{display:flex!important}
+
+.fTopbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 max(16px, env(safe-area-inset-left));height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:60;
+  box-shadow:0 1px 8px rgba(91,79,207,.06);
+}
+.fTopbarBrand{display:flex;align-items:center;gap:10px}
+.fTopbarLogo{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--p),#7c6fe0);
+  display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;
+}
+.fTopbarLogo img{width:100%;height:100%;object-fit:cover}
+.fTopbarTitle{font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:600}
+.fTopbarSubtitle{font-size:10px;color:var(--ink3)}
+.btnTopBack{
+  display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--white);color:var(--ink3);
+  font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.btnTopBack:hover{background:var(--mist);border-color:var(--mist3)}
+
+.fContainer{
+  flex:1;max-width:720px;width:100%;margin:0 auto;
+  padding:24px max(16px,env(safe-area-inset-left)) 60px;
+}
+
+/* Progress tracker */
+.progress{margin-bottom:28px}
+.progressTrack{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:relative;
+}
+.progressTrack::before{
+  content:'';position:absolute;top:17px;left:18px;right:18px;height:2px;
+  background:var(--border);z-index:0;
+}
+.progressFill{
+  position:absolute;top:17px;left:18px;height:2px;background:var(--p);z-index:1;
+  transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.progStep{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;z-index:2}
+.progDot{
+  width:34px;height:34px;border-radius:50%;border:2px solid var(--border);
+  background:var(--white);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--ink3);
+  transition:all .3s cubic-bezier(.16,1,.3,1);
+}
+.progStep.s-active .progDot{border-color:var(--p);color:var(--p);box-shadow:0 0 0 5px rgba(91,79,207,.12)}
+.progStep.s-done .progDot{background:var(--p);border-color:var(--p);color:#fff}
+.progStep.s-done .progDot::after{content:'✓'}
+.progStep.s-done .progDot .progNum{display:none}
+.progStepLabel{font-size:10px;font-weight:600;color:var(--ink3);text-align:center;line-height:1.3}
+.progStep.s-active .progStepLabel{color:var(--p);font-weight:700}
+.progStep.s-done .progStepLabel{color:var(--g)}
+
+/* Form card */
+.fCard{
+  background:var(--white);border-radius:var(--radius-lg);
+  border:1px solid var(--border);padding:clamp(20px,5vw,32px);
+  box-shadow:var(--shadow);margin-bottom:14px;
+}
+.fCardHeader{margin-bottom:22px}
+.fCardNum{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:8px;background:var(--p);color:#fff;
+  font-size:13px;font-weight:800;margin-bottom:10px;
+}
+.fCardTitle{font-family:var(--serif);font-size:clamp(20px,4vw,24px);color:var(--ink);margin-bottom:4px}
+.fCardSub{font-size:12px;color:var(--ink3);line-height:1.6}
+
+.fGrid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fGrid1{margin-bottom:14px}
+.fLabel{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.3px;display:block;margin-bottom:5px;text-transform:uppercase}
+.fReq{color:var(--r)}
+.fInput,.fSelect{
+  width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px 14px;font-size:14px;color:var(--ink);
+  background:var(--mist);outline:none;transition:all .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.fInput:focus,.fSelect:focus{
+  border-color:var(--p);background:var(--white);
+  box-shadow:0 0 0 4px rgba(91,79,207,.1);
+}
+.fInput.err{border-color:var(--r);background:#fff9f9}
+.fHint{font-size:10.5px;color:var(--ink3);margin-top:4px;line-height:1.5}
+.fSelect{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364627a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+
+/* TT scroll */
+.ttBox{
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  max-height:clamp(280px,50vh,400px);overflow-y:auto;
+  padding:20px;background:var(--mist);margin-bottom:14px;
+}
+.ttHeader{text-align:center;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--border)}
+.ttTitle{font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:2px}
+.ttKost{font-size:12px;font-weight:700;color:var(--p);margin-bottom:4px}
+.ttAddr{font-size:11px;color:var(--ink3);line-height:1.6}
+.ttBab{display:flex;align-items:center;gap:8px;margin:14px 0 7px;font-size:12px;font-weight:700;color:var(--p)}
+.ttBabNum{width:20px;height:20px;border-radius:5px;background:var(--p);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.ttList{padding-left:18px;margin:0}
+.ttList li{font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:4px}
+
+/* Agreement */
+.agreeBox{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px 16px;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:var(--radius);
+}
+.agreeBox input[type=checkbox]{
+  width:18px;height:18px;margin-top:2px;accent-color:var(--p);
+  cursor:pointer;flex-shrink:0;
+}
+.agreeBox label{font-size:12.5px;color:#78350f;font-weight:600;cursor:pointer;line-height:1.6}
+
+/* Signature */
+.signWrap{
+  border:2px dashed var(--border);border-radius:var(--radius);
+  padding:clamp(12px,3vw,18px);background:var(--mist);
+  transition:border-color .2s;
+}
+.signWrap.has-sig{border-color:var(--p);border-style:solid}
+.signLabel{font-size:11px;font-weight:700;color:var(--p);text-align:center;margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase}
+#signCanvas{
+  display:block;margin:0 auto;background:var(--white);border-radius:8px;
+  border:1px solid var(--border);cursor:crosshair;touch-action:none;
+  max-width:100%;
+}
+.signBar{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px}
+.signStatusText{font-size:11px;color:var(--ink3)}
+.signStatusText.signed{color:var(--g);font-weight:700}
+.btnClearSign{
+  padding:6px 13px;border-radius:6px;border:1px solid var(--border);
+  background:var(--white);color:var(--ink3);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .15s;
+}
+.btnClearSign:hover{background:var(--r2);color:var(--r);border-color:#fca5a5}
+
+/* Nav buttons */
+.fNavRow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.btnPrev{
+  display:flex;align-items:center;gap:6px;padding:11px 20px;
+  border-radius:var(--radius-sm);border:1.5px solid var(--border);
+  background:var(--white);color:var(--ink3);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.btnPrev:hover{background:var(--mist);border-color:var(--mist3)}
+.btnNext{
+  display:flex;align-items:center;gap:6px;padding:11px 24px;
+  border-radius:var(--radius-sm);border:none;
+  background:linear-gradient(135deg,var(--p),#7c6fe0);color:#fff;
+  font-size:13px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 16px rgba(91,79,207,.35);transition:all .2s;
+}
+.btnNext:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(91,79,207,.45)}
+.btnNext:active{transform:translateY(0)}
+.btnNext:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Success */
+.successCard{text-align:center;padding:clamp(24px,6vw,44px) clamp(20px,5vw,32px)}
+.successEmoji{font-size:clamp(48px,10vw,72px);margin-bottom:16px}
+.successTitle{font-family:var(--serif);font-size:clamp(22px,4vw,30px);color:var(--ink);margin-bottom:8px}
+.successSub{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:28px;max-width:440px;margin-left:auto;margin-right:auto}
+.dlBtns{display:flex;flex-direction:column;gap:10px;max-width:380px;margin:0 auto 22px}
+.dlBtn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:clamp(12px,3vw,16px) 20px;border-radius:var(--radius);border:none;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.dlBtn:hover{transform:translateY(-1px)}
+.dlBtn:active{transform:translateY(0)}
+.dlBlue{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.dlBlue:hover{box-shadow:0 7px 24px rgba(37,99,235,.4)}
+.dlWA{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 4px 16px rgba(37,211,102,.25)}
+.dlPrint{background:var(--mist);color:var(--ink3);border:1.5px solid var(--border)}
+.dlHome{background:var(--white);color:var(--p);border:1.5px solid var(--p)}
+.dlHome:hover{background:var(--mist2)}
+.nextStepNote{
+  padding:14px 18px;background:#fffbeb;border-radius:var(--radius);
+  border:1px solid #fcd34d;font-size:12px;color:#78350f;text-align:left;line-height:1.6;
+}
+
+/* ═══════════════════════════════════════════════
+   ADMIN LOGIN
+═══════════════════════════════════════════════ */
+#sAdminLogin{
+  min-height:100dvh;
+  background:radial-gradient(ellipse 120% 80% at 50% -10%,#2e1f78 0%,#1a1040 60%,#0d0820 100%);
+  align-items:center;justify-content:center;padding:20px;
+}
+.alCard{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius-lg);padding:clamp(28px,6vw,40px);
+  width:100%;max-width:400px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 32px 64px rgba(0,0,0,.5);animation:fadeUp .4s both;
+}
+.alLogo{
+  width:64px;height:64px;border-radius:18px;
+  background:linear-gradient(135deg,var(--p),#7c6fe0);
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  margin:0 auto 16px;box-shadow:0 8px 24px rgba(91,79,207,.5);overflow:hidden;
+}
+.alLogo img{width:100%;height:100%;object-fit:cover}
+.alTitle{font-family:var(--serif);font-size:22px;color:#fff;text-align:center;margin-bottom:4px}
+.alSub{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:24px}
+.alLabel{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.5px;display:block;margin-bottom:5px;text-transform:uppercase}
+.alInputWrap{position:relative;margin-bottom:12px}
+.alInput{
+  width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius-sm);padding:11px 14px;color:#fff;font-size:14px;outline:none;
+  transition:border .2s;
+}
+.alInput:focus{border-color:var(--p2);box-shadow:0 0 0 3px rgba(91,79,207,.25)}
+.alInputWrap .alInput{padding-right:44px}
+.alEye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:16px;padding:4px}
+.alBtn{
+  width:100%;padding:13px;border-radius:var(--radius-sm);border:none;
+  background:linear-gradient(135deg,var(--p),#7c6fe0);color:#fff;
+  font-weight:700;font-size:14px;cursor:pointer;margin-top:8px;
+  box-shadow:0 4px 16px rgba(91,79,207,.4);transition:all .2s;
+}
+.alBtn:hover{transform:translateY(-1px);box-shadow:0 7px 24px rgba(91,79,207,.5)}
+.alDemoBox{margin-top:16px;padding:12px 14px;background:rgba(91,79,207,.15);border-radius:10px;border:1px solid rgba(91,79,207,.25)}
+.alDemoTitle{font-size:9.5px;color:rgba(255,255,255,.3);font-weight:700;letter-spacing:.5px;margin-bottom:7px;text-transform:uppercase}
+.alDemoRow{display:flex;justify-content:space-between;padding:4px 6px;font-size:11px;cursor:pointer;border-radius:5px;transition:background .1s}
+.alDemoRow:hover{background:rgba(255,255,255,.06)}
+.alBack{width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;transition:all .15s}
+.alBack:hover{color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2)}
+
+/* ═══════════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════════ */
+#sAdmin{min-height:100dvh;align-items:stretch}
+
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:252px;
+  background:linear-gradient(180deg,var(--ink) 0%,#1e1b4b 100%);
+  border-right:1px solid rgba(255,255,255,.06);
+  z-index:100;display:flex;flex-direction:column;
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
+}
+.sidebar.hidden{transform:translateX(-100%)}
+.sbHead{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sbLogo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--p),#7c6fe0);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;box-shadow:0 4px 12px rgba(91,79,207,.4)}
+.sbLogo img{width:100%;height:100%;object-fit:cover}
+.sbKostName{font-family:var(--serif);font-size:13px;color:#fff;line-height:1.2}
+.sbSubText{font-size:9.5px;color:rgba(255,255,255,.3);margin-top:1px}
+.sbNav{flex:1;padding:10px 9px;overflow-y:auto}
+.sbBtn{
+  width:100%;display:flex;align-items:center;gap:9px;padding:9px 11px;
+  border-radius:9px;border:none;cursor:pointer;margin-bottom:2px;
+  background:transparent;color:rgba(255,255,255,.45);font-size:12px;
+  font-weight:500;text-align:left;transition:all .15s;
+  border-left:3px solid transparent;
+}
+.sbBtn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.75)}
+.sbBtn.on{background:rgba(91,79,207,.2);color:#a5b4fc;border-left-color:var(--p);font-weight:700}
+.sbBadge{background:var(--r);color:#fff;border-radius:10px;font-size:9px;font-weight:800;padding:1px 6px;margin-left:auto}
+.sbFoot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.07)}
+.sbUser{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.sbAvatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sbUserName{font-size:11.5px;font-weight:700;color:#fff}
+.sbUserRole{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.sbSaveAt{font-size:9.5px;color:#34d399;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.sbLogout{width:100%;padding:7px;border-radius:7px;border:1px solid rgba(220,38,38,.3);background:rgba(220,38,38,.07);color:#f87171;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.sbLogout:hover{background:rgba(220,38,38,.15)}
+
+/* Mobile sidebar overlay */
+.sbOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(3px)}
+.sbOverlay.on{display:block}
+
+/* Sidebar toggle btn */
+.sbToggle{
+  display:none;width:38px;height:38px;border-radius:8px;border:1px solid var(--border);
+  background:var(--white);align-items:center;justify-content:center;cursor:pointer;font-size:18px;
+}
+
+.adminMain{
+  margin-left:252px;min-height:100dvh;
+  display:flex;flex-direction:column;flex:1;
+  width:calc(100% - 252px);
+  transition:margin .3s,width .3s;
+}
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:10px 22px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 4px rgba(91,79,207,.05);gap:10px;
+}
+.topTitleArea{min-width:0}
+.topTitle{font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
+.topDate{font-size:10.5px;color:var(--ink3);margin-top:1px}
+.topActions{display:flex;gap:7px;flex-shrink:0;align-items:center}
+.topLink{
+  display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;
+  color:#fff;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer;
+  white-space:nowrap;
+}
+.aContent{padding:clamp(14px,3vw,22px);flex:1}
+.aPage{display:none}
+.aPage.on{display:block;animation:fadeUp .2s ease}
+
+/* Admin UI components */
+.aHeader{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+.aTitleGroup{min-width:0}
+.aTitle{font-size:clamp(16px,3vw,20px);font-weight:700;color:var(--ink)}
+.aSub{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.sg{display:grid;gap:12px}
+.sg2{grid-template-columns:repeat(2,1fr)}
+.sg3{grid-template-columns:repeat(3,1fr)}
+.sg4{grid-template-columns:repeat(4,1fr)}
+.stCard{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow)}
+.stIcon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:9px}
+.stVal{font-size:22px;font-weight:800}
+.stLabel{font-size:10.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+.stSub{font-size:10px;color:var(--ink3);margin-top:2px}
+.heroB{
+  background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#9333ea);
+  border-radius:var(--radius-lg);padding:clamp(18px,4vw,26px);
+  margin-bottom:14px;color:#fff;position:relative;overflow:hidden;
+}
+.heroB::before{content:'';position:absolute;width:220px;height:220px;background:rgba(255,255,255,.07);border-radius:50%;right:-50px;top:-60px}
+.heroB::after{content:'';position:absolute;width:130px;height:130px;background:rgba(255,255,255,.05);border-radius:50%;bottom:-30px;right:140px}
+.heroBTitle{font-family:var(--serif);font-size:clamp(18px,3vw,22px);position:relative}
+.heroBAddr{font-size:11px;opacity:.65;margin-top:3px;position:relative;line-height:1.6}
+.heroBStats{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;position:relative}
+.heroBStat{background:rgba(255,255,255,.13);border-radius:9px;padding:7px 13px}
+.heroBStatV{font-size:18px;font-weight:800}
+.heroBStatL{font-size:9.5px;opacity:.7}
+
+.tblWrap{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.tblScroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:480px}
+thead tr{background:var(--mist)}
+th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 12px;font-size:12px;color:var(--ink2);border-bottom:1px solid var(--mist);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--mist)}
+.badge{padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;display:inline-block;white-space:nowrap}
+.b-g{background:var(--g2);color:var(--g)}
+.b-y{background:var(--a2);color:var(--a)}
+.b-r{background:var(--r2);color:var(--r)}
+.b-b{background:var(--mist2);color:var(--p)}
+.b-s{background:var(--sky2);color:var(--sky)}
+.abtn{padding:6px 12px;border-radius:7px;border:none;cursor:pointer;font-weight:700;font-size:11px;transition:all .15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.abtn:hover{transform:translateY(-1px)}
+.abtn-p{background:linear-gradient(135deg,var(--p),#7c6fe0);color:#fff;box-shadow:0 2px 8px rgba(91,79,207,.3)}
+.abtn-s{background:linear-gradient(135deg,var(--g),#047857);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,.3)}
+.abtn-e{background:var(--mist2);color:var(--p);border:1px solid var(--mist3);padding:3px 9px;font-size:10.5px}
+.abtn-d{background:var(--r2);color:var(--r);border:1px solid #fca5a5;padding:3px 9px;font-size:10.5px}
+.abtn-g{background:var(--g2);color:var(--g);border:1px solid var(--g3);padding:3px 9px;font-size:10.5px}
+.abtn-wa{background:#f0fdf4;color:#15803d;border:1px solid #86efac;padding:3px 9px;font-size:10.5px}
+.abtn-pdf{background:var(--sky2);color:var(--sky);border:1px solid #bae6fd;padding:3px 9px;font-size:10.5px}
+.abtn-cancel{background:var(--mist);color:var(--ink3);border:1px solid var(--border)}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(12,10,30,.5);z-index:400;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
+.overlay.on{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);padding:clamp(20px,4vw,28px);width:100%;max-width:480px;box-shadow:var(--shadow-lg);animation:fadeUp .2s ease;max-height:90dvh;overflow-y:auto}
+.mTitle{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.mClose{background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink3);padding:2px}
+.mGrid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px}
+.mGrid1{margin-bottom:12px}
+.mLabel{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.3px;display:block;margin-bottom:4px;text-transform:uppercase}
+.mInput,.mSelect{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--ink);outline:none;background:var(--mist);transition:border .15s}
+.mInput:focus,.mSelect:focus{border-color:var(--p);background:var(--white);box-shadow:0 0 0 3px rgba(91,79,207,.1)}
+.mFooter{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+#confirmOverlay{display:none;position:fixed;inset:0;background:rgba(12,10,30,.5);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+#confirmOverlay.on{display:flex}
+.confirmBox{background:var(--white);border-radius:var(--radius-lg);padding:clamp(20px,5vw,28px);width:100%;max-width:320px;text-align:center;box-shadow:var(--shadow-lg);animation:fadeUp .2s}
+
+/* Settings */
+.settGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.settCard{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:18px;box-shadow:var(--shadow)}
+.settTitle{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.settSub{font-size:11px;color:var(--ink3);margin-bottom:13px}
+.iRow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--mist);font-size:11.5px}
+.permTag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;background:var(--mist2);color:var(--p);font-weight:700;margin:1px}
+.logBadge{padding:2px 6px;border-radius:4px;font-size:9.5px;font-weight:700;white-space:nowrap;display:inline-block}
+.filterBtn{padding:4px 10px;border-radius:16px;border:1px solid var(--border);background:var(--white);color:var(--ink3);font-size:10.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.filterBtn.on{background:var(--mist2);border-color:var(--p);color:var(--p)}
+.dangerZone{border:1px solid #fecaca!important}
+
+/* Toast */
+#toastCont{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:var(--ink);border-radius:10px;padding:11px 15px;min-width:200px;max-width:320px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.28);animation:slideR .25s ease;border:1px solid rgba(255,255,255,.07);pointer-events:all}
+@keyframes slideR{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.tIcon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.tMsg{font-size:12.5px;color:#f1f5f9;font-weight:500}
+.toast-s .tIcon{background:rgba(16,185,129,.2);color:#34d399}
+.toast-e .tIcon{background:rgba(220,38,38,.2);color:#f87171}
+.toast-i .tIcon{background:rgba(91,79,207,.2);color:var(--p2)}
+.shake{animation:shk .4s ease}
+@keyframes shk{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(3px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+
+/* Print */
+@media print{
+  body>*{display:none!important}
+  #printArea{display:block!important;position:fixed;inset:0;background:#fff;padding:12mm;font-family:var(--sans);font-size:10pt;color:#000;z-index:99999}
+}
+/* Print area hidden default */
+#printArea{display:none}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .sg4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  /* Admin sidebar hidden by default on mobile */
+  .sidebar{transform:translateX(-100%)}
+  .adminMain{margin-left:0;width:100%}
+  .sbToggle{display:flex}
+  .sg4,.settGrid{grid-template-columns:repeat(2,1fr)}
+  .sg2{grid-template-columns:1fr}
+  .fGrid2,.mGrid2{grid-template-columns:1fr}
+  .topActions .topLink:not(:last-child){display:none}
+  .modeCard{padding:16px 18px}
+  .modeCardIcon{width:46px;height:46px;font-size:22px}
+  .homeStats{flex-wrap:wrap}
+  .homeStat{min-width:50%;flex:1}
+  table{min-width:540px}
+}
+@media(max-width:480px){
+  .sg3,.sg4,.settGrid{grid-template-columns:1fr}
+  .heroBStats{gap:6px}
+  .fNavRow{flex-direction:column}
+  .btnPrev,.btnNext{width:100%;justify-content:center}
+  .dlBtns{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ TOAST ═══════════════════════════ -->
+<div id="toastCont"></div>
+<div id="printArea"></div>
+
+<!-- ═══════════════════════════ HOME ═══════════════════════════ -->
+<div id="sHome" class="screen on">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="homeInner">
+    <div class="homeHeader">
+      <div class="homeLogo" id="homeLogoEl">🏠</div>
+      <div class="homeKostName">Kost Garcia Putri</div>
+      <div class="homeAddr">Jl. HML Abdul Syukur No.5 RT.001/001<br>Kel. Rawabuntu, Kec. Serpong — Tangerang Selatan 15318</div>
+    </div>
+
+    <div class="modeCards">
+      <!-- PENGHUNI: Tanpa Login -->
+      <div class="modeCard" onclick="go('sForm')">
+        <div class="modeCardIcon" style="background:linear-gradient(135deg,#059669,#047857)">📋</div>
+        <div class="modeCardBody">
+          <div class="modeCardTitle">Formulir Pendaftaran Penghuni</div>
+          <div class="modeCardDesc">Isi data diri, baca tata tertib, tanda tangan digital, dan download dokumen PDF — tanpa perlu login</div>
+          <span class="modeCardTag" style="background:rgba(16,185,129,.2);color:#34d399">✓ TANPA LOGIN · UNTUK PENGHUNI</span>
+        </div>
+        <div class="modeCardArrow">›</div>
+      </div>
+
+      <!-- ADMIN: Dengan Login -->
+      <div class="modeCard" onclick="go('sAdminLogin')">
+        <div class="modeCardIcon" style="background:linear-gradient(135deg,var(--p),#7c6fe0)">🔐</div>
+        <div class="modeCardBody">
+          <div class="modeCardTitle">Dashboard Admin / Pengelola</div>
+          <div class="modeCardDesc">Kelola kamar, penyewa, tagihan, dan review formulir pendaftaran yang masuk</div>
+          <span class="modeCardTag" style="background:rgba(91,79,207,.2);color:#a5b4fc">🔒 LOGIN DIPERLUKAN · UNTUK PENGELOLA</span>
+        </div>
+        <div class="modeCardArrow">›</div>
+      </div>
+    </div>
+
+    <div class="homeStats">
+      <div class="homeStat"><div class="homeStatVal" id="hs-kamar">4</div><div class="homeStatLabel">Total Kamar</div></div>
+      <div class="homeStat"><div class="homeStatVal" id="hs-kosong">4</div><div class="homeStatLabel">Tersedia</div></div>
+      <div class="homeStat"><div class="homeStatVal" id="hs-penghuni">0</div><div class="homeStatLabel">Penghuni</div></div>
+      <div class="homeStat"><div class="homeStatVal" id="hs-forms">0</div><div class="homeStatLabel">Pendaftar</div></div>
+    </div>
+
+    <!-- Share link -->
+    <div class="shareLinkBox">
+      <div class="shareLinkTitle">📲 Bagikan Link Formulir ke Calon Penghuni</div>
+      <div class="shareLinkRow">
+        <div class="shareLinkUrl" id="shareLinkUrl">Memuat link...</div>
+        <button class="btnCopy" id="btnCopyLink" onclick="copyLink()">Salin</button>
+      </div>
+      <div class="shareWARow">
+        <button class="btnShareWA" onclick="shareViaWA()">
+          <span>📱</span> Share ke WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FORMULIR PENGHUNI ═══════════════════════════ -->
+<div id="sForm" class="screen">
+  <div class="fTopbar">
+    <div class="fTopbarBrand">
+      <div class="fTopbarLogo" id="fNavLogoEl">🏠</div>
+      <div>
+        <div class="fTopbarTitle">Kost Garcia Putri</div>
+        <div class="fTopbarSubtitle">Formulir Pendaftaran Penghuni</div>
+      </div>
+    </div>
+    <button class="btnTopBack" onclick="go('sHome')">← Kembali</button>
+  </div>
+
+  <div class="fContainer">
+    <!-- Progress -->
+    <div class="progress">
+      <div class="progressTrack" id="progressTrack">
+        <div class="progressFill" id="progressFill" style="width:0%"></div>
+        <div class="progStep s-active" id="pstep1"><div class="progDot"><span class="progNum">1</span></div><div class="progStepLabel">Data Diri</div></div>
+        <div class="progStep" id="pstep2"><div class="progDot"><span class="progNum">2</span></div><div class="progStepLabel">Tata Tertib</div></div>
+        <div class="progStep" id="pstep3"><div class="progDot"><span class="progNum">3</span></div><div class="progStepLabel">Tanda Tangan</div></div>
+        <div class="progStep" id="pstep4"><div class="progDot"><span class="progNum">4</span></div><div class="progStepLabel">Download</div></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Data Diri -->
+    <div id="fStep1">
+      <div class="fCard">
+        <div class="fCardHeader">
+          <div class="fCardNum">1</div>
+          <div class="fCardTitle">Data Diri Calon Penghuni</div>
+          <div class="fCardSub">Isi formulir di bawah ini dengan lengkap dan benar sesuai identitas resmi Anda</div>
+        </div>
+        <div class="fGrid2">
+          <div><label class="fLabel">Nama Lengkap <span class="fReq">*</span></label><input class="fInput" id="f1Nama" placeholder="Sesuai KTP/identitas"></div>
+          <div><label class="fLabel">No. KTP / NIK <span class="fReq">*</span></label><input class="fInput" id="f1NIK" placeholder="16 digit NIK" maxlength="16" inputmode="numeric"></div>
+        </div>
+        <div class="fGrid2">
+          <div><label class="fLabel">No. HP / WhatsApp <span class="fReq">*</span></label><input class="fInput" id="f1HP" placeholder="08xxxxxxxxxx" type="tel" inputmode="tel"></div>
+          <div><label class="fLabel">Email</label><input class="fInput" id="f1Email" placeholder="email@domain.com" type="email" inputmode="email"></div>
+        </div>
+        <div class="fGrid2">
+          <div><label class="fLabel">Pilih Kamar <span class="fReq">*</span></label><select class="fSelect" id="f1Kamar"></select></div>
+          <div><label class="fLabel">Tanggal Masuk</label><input class="fInput" id="f1Tgl" type="date"></div>
+        </div>
+        <div class="fGrid2">
+          <div><label class="fLabel">Pekerjaan</label><input class="fInput" id="f1Kerja" placeholder="Mahasiswa / Karyawan / dll"></div>
+          <div><label class="fLabel">Asal Kota</label><input class="fInput" id="f1Asal" placeholder="Kota asal Anda"></div>
+        </div>
+        <div class="fGrid1"><label class="fLabel">Kontak Darurat (Nama &amp; No. HP)</label><input class="fInput" id="f1Darurat" placeholder="Nama orang tua/keluarga — 08xxxxxxxxxx"></div>
+        <div class="fGrid1"><label class="fLabel">Kendaraan <span class="fHint" style="display:inline">(opsional)</span></label><input class="fInput" id="f1Kendaraan" placeholder="Jenis & plat nomor, cth: Honda Beat — B 1234 XY"></div>
+      </div>
+      <div class="fNavRow">
+        <button class="btnPrev" onclick="go('sHome')">← Kembali</button>
+        <button class="btnNext" onclick="validateStep1()">Lanjut: Baca Tata Tertib →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Tata Tertib -->
+    <div id="fStep2" style="display:none">
+      <div class="fCard">
+        <div class="fCardHeader">
+          <div class="fCardNum">2</div>
+          <div class="fCardTitle">Tata Tertib Penghuni</div>
+          <div class="fCardSub">Baca seluruh peraturan berikut dengan seksama. Gulir ke bawah untuk membaca semua isi.</div>
+        </div>
+        <div class="ttBox" id="ttBoxContent">
+          <div class="ttHeader">
+            <div class="ttTitle">TATA TERTIB PENGHUNI</div>
+            <div class="ttKost">KOST GARCIA PUTRI</div>
+            <div class="ttAddr">Jl. HML Abdul Syukur No.5 RT.001/001, Kel. Rawabuntu, Kec. Serpong<br>Kota Tangerang Selatan 15318</div>
+          </div>
+          <!-- TT rendered by JS -->
+        </div>
+        <div class="agreeBox">
+          <input type="checkbox" id="agreeChk" onchange="onAgree()">
+          <label for="agreeChk">Saya, <strong id="agreeNama">calon penghuni</strong>, menyatakan telah <strong>membaca, memahami, dan menyetujui</strong> seluruh Tata Tertib Penghuni Kost Garcia Putri. Saya bersedia mematuhi semua peraturan dan menerima konsekuensi atas setiap pelanggaran.</label>
+        </div>
+      </div>
+      <div class="fNavRow">
+        <button class="btnPrev" onclick="gotoStep(1)">← Kembali</button>
+        <button class="btnNext" id="btnS2Next" onclick="gotoStep(3)" disabled>Lanjut: Tanda Tangan →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Tanda Tangan -->
+    <div id="fStep3" style="display:none">
+      <div class="fCard">
+        <div class="fCardHeader">
+          <div class="fCardNum">3</div>
+          <div class="fCardTitle">Tanda Tangan Digital</div>
+          <div class="fCardSub">Tanda tangan di area bawah menggunakan jari (HP/tablet) atau mouse (PC/laptop) sebagai bukti persetujuan resmi</div>
+        </div>
+        <div class="fGrid2">
+          <div><label class="fLabel">Tempat</label><input class="fInput" id="f3Tempat" value="Tangerang Selatan"></div>
+          <div><label class="fLabel">Tanggal</label><input class="fInput" id="f3Tanggal" type="date"></div>
+        </div>
+        <div class="signWrap" id="signWrap">
+          <div class="signLabel">✍ AREA TANDA TANGAN — Tanda tangani di sini</div>
+          <canvas id="signCanvas"></canvas>
+          <div class="signBar">
+            <span class="signStatusText" id="signStatus">Belum ditandatangani</span>
+            <button class="btnClearSign" onclick="clearSign()">🗑 Hapus &amp; Ulangi</button>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:12px 16px;background:var(--g2);border-radius:var(--radius-sm);border:1px solid var(--g3);font-size:12px;color:#065f46;line-height:1.6">
+          ✅ Tanda tangan digital ini berlaku sebagai bukti persetujuan resmi atas tata tertib dan perjanjian sewa.
+        </div>
+      </div>
+      <div class="fNavRow">
+        <button class="btnPrev" onclick="gotoStep(2)">← Kembali</button>
+        <button class="btnNext" onclick="submitForm()">✅ Selesai &amp; Buat Dokumen →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Sukses & Download -->
+    <div id="fStep4" style="display:none">
+      <div class="fCard">
+        <div class="successCard">
+          <div class="successEmoji">🎉</div>
+          <div class="successTitle">Pendaftaran Berhasil!</div>
+          <div class="successSub">Terima kasih, <strong id="successName">Penghuni</strong>! Formulir pendaftaran Anda sudah siap.<br>Unduh dokumen PDF untuk diserahkan ke pengelola saat check-in.</div>
+          <div class="dlBtns">
+            <button class="dlBtn dlBlue" onclick="downloadPDF()">⬇ Download Formulir PDF</button>
+            <button class="dlBtn dlWA" onclick="shareWASuccess()">📲 Kirim via WhatsApp</button>
+            <button class="dlBtn dlPrint" onclick="printDoc()">🖨 Cetak Dokumen</button>
+            <button class="dlBtn dlHome" onclick="resetAndGoHome()">← Kembali ke Halaman Utama</button>
+          </div>
+          <div class="nextStepNote">
+            📌 <strong>Langkah selanjutnya:</strong> Tunjukkan dokumen PDF ini kepada pengelola Kost Garcia Putri saat Anda tiba untuk check-in. Bawa juga KTP asli Anda untuk verifikasi.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN LOGIN ═══════════════════════════ -->
+<div id="sAdminLogin" class="screen">
+  <div class="alCard" id="alCard">
+    <div class="alLogo" id="alLogoEl">🔐</div>
+    <div class="alTitle">Admin Dashboard</div>
+    <div class="alSub">Kost Garcia Putri — Panel Pengelola</div>
+    <label class="alLabel">Username</label>
+    <input class="alInput" id="alUser" placeholder="Masukkan username" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <label class="alLabel" style="margin-top:4px">Password</label>
+    <div class="alInputWrap">
+      <input class="alInput" id="alPass" type="password" placeholder="Masukkan password" autocomplete="new-password">
+      <button class="alEye" id="alEye" onclick="toggleAlPass()">👁</button>
+    </div>
+    <button class="alBtn" id="alLoginBtn" onclick="doLogin()">MASUK DASHBOARD</button>
+    <div style="margin-top:10px;padding:10px 12px;background:rgba(91,79,207,.12);border-radius:9px;border:1px solid rgba(91,79,207,.2)">
+      <div style="font-size:10px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.5px;margin-bottom:4px">🔒 KEAMANAN</div>
+      <div style="font-size:10.5px;color:rgba(255,255,255,.45);line-height:1.6">Password dienkripsi SHA-256. Akun dikunci otomatis setelah 5x gagal login. Hubungi pemilik kost untuk reset password.</div>
+    </div>
+    <button class="alBack" onclick="go('sHome')">← Kembali ke Halaman Utama</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN DASHBOARD ═══════════════════════════ -->
+<div id="sAdmin" class="screen">
+  <!-- Mobile overlay -->
+  <div class="sbOverlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sbHead">
+      <div class="sbLogo" id="sbLogoEl">🏠</div>
+      <div><div class="sbKostName">Kost Garcia Putri</div><div class="sbSubText">Panel Admin</div></div>
+    </div>
+    <nav class="sbNav" id="sbNav"></nav>
+    <div class="sbFoot">
+      <div class="sbUser">
+        <div class="sbAvatar" id="sbAvatar">👤</div>
+        <div><div class="sbUserName" id="sbUserName">-</div><div class="sbUserRole" id="sbUserRole">-</div></div>
+      </div>
+      <div class="sbSaveAt">💾 <span id="sbSaveTime">Data tersimpan</span></div>
+      <button class="sbLogout" onclick="doLogout()">Keluar dari Sistem</button>
+    </div>
+  </div>
+
+  <div class="adminMain" id="adminMain">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="sbToggle" id="sbToggle" onclick="toggleSidebar()">☰</button>
+        <div class="topTitleArea">
+          <div class="topTitle" id="topTitle">Dashboard</div>
+          <div class="topDate" id="topDate"></div>
+        </div>
+      </div>
+      <div class="topActions">
+        <a href="https://docs.google.com/spreadsheets/d/1OVtuiMOwdYEpcFL5PVUTxaVG5vioXydGg4NMI5TjG4c" target="_blank" class="topLink" style="background:linear-gradient(135deg,#059669,#047857)">📊 Sheet</a>
+        <a href="https://drive.google.com/drive/folders/17fcLflQxqP3GMJoIOTlrEjyT6S9bCwZA" target="_blank" class="topLink" style="background:linear-gradient(135deg,var(--p),#7c6fe0)">📁 Drive</a>
+      </div>
+    </div>
+    <div class="aContent">
+      <div id="ap-dashboard" class="aPage on"></div>
+      <div id="ap-kamar" class="aPage"></div>
+      <div id="ap-penyewa" class="aPage"></div>
+      <div id="ap-billing" class="aPage"></div>
+      <div id="ap-pendaftaran" class="aPage"></div>
+      <div id="ap-tatatertib" class="aPage"></div>
+      <div id="ap-logs" class="aPage"></div>
+      <div id="ap-settings" class="aPage"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Modals -->
+<div class="overlay" id="kamarModal"><div class="modal">
+  <div class="mTitle"><span id="kamarMT">Tambah Kamar</span><button class="mClose" onclick="closeModal('kamarModal')">✕</button></div>
+  <input type="hidden" id="kamarEId">
+  <div class="mGrid2"><div><label class="mLabel">Nomor</label><input class="mInput" id="mkNomor" placeholder="101"></div><div><label class="mLabel">Tipe</label><select class="mSelect" id="mkTipe"><option>Standard</option><option>Deluxe</option><option>VIP</option></select></div></div>
+  <div class="mGrid2"><div><label class="mLabel">Harga/Bulan (Rp)</label><input class="mInput" type="number" id="mkHarga"></div><div><label class="mLabel">Status</label><select class="mSelect" id="mkStatus"><option>Kosong</option><option>Terisi</option><option>Maintenance</option></select></div></div>
+  <div class="mGrid1"><label class="mLabel">Keterangan / Fasilitas</label><input class="mInput" id="mkKet"></div>
+  <div class="mFooter"><button class="abtn abtn-cancel" onclick="closeModal('kamarModal')">Batal</button><button class="abtn abtn-p" onclick="saveKamar()">💾 Simpan</button></div>
+</div></div>
+
+<div class="overlay" id="penyewaModal"><div class="modal">
+  <div class="mTitle"><span id="penyewaMT">Tambah Penyewa</span><button class="mClose" onclick="closeModal('penyewaModal')">✕</button></div>
+  <input type="hidden" id="penyewaEId">
+  <div class="mGrid1"><label class="mLabel">Nama Lengkap</label><input class="mInput" id="mpNama"></div>
+  <div class="mGrid2"><div><label class="mLabel">Kamar</label><select class="mSelect" id="mpKamar"></select></div><div><label class="mLabel">No HP</label><input class="mInput" id="mpHP"></div></div>
+  <div class="mGrid2"><div><label class="mLabel">No KTP / NIK</label><input class="mInput" id="mpKTP"></div><div><label class="mLabel">Tanggal Masuk</label><input class="mInput" type="date" id="mpTgl"></div></div>
+  <div class="mGrid2"><div><label class="mLabel">Pekerjaan</label><input class="mInput" id="mpKerja"></div><div><label class="mLabel">Asal Kota</label><input class="mInput" id="mpAsal"></div></div>
+  <div class="mGrid1"><label class="mLabel">Kontak Darurat</label><input class="mInput" id="mpDarurat"></div>
+  <div class="mGrid1"><label class="mLabel">Kendaraan</label><input class="mInput" id="mpKendaraan"></div>
+  <div class="mGrid1"><label class="mLabel">Status</label><select class="mSelect" id="mpStatus"><option>Aktif</option><option>Tidak Aktif</option></select></div>
+  <div class="mFooter"><button class="abtn abtn-cancel" onclick="closeModal('penyewaModal')">Batal</button><button class="abtn abtn-p" onclick="savePenyewa()">💾 Simpan</button></div>
+</div></div>
+
+<div class="overlay" id="tagihanModal"><div class="modal">
+  <div class="mTitle"><span>Tambah Tagihan</span><button class="mClose" onclick="closeModal('tagihanModal')">✕</button></div>
+  <div class="mGrid1"><label class="mLabel">Penyewa</label><select class="mSelect" id="mtPenyewa"></select></div>
+  <div class="mGrid2"><div><label class="mLabel">Periode</label><input class="mInput" type="month" id="mtPeriode"></div><div><label class="mLabel">Jumlah (Rp)</label><input class="mInput" type="number" id="mtJumlah"></div></div>
+  <div class="mGrid2"><div><label class="mLabel">Jatuh Tempo</label><input class="mInput" type="date" id="mtJT"></div><div><label class="mLabel">Status</label><select class="mSelect" id="mtStatus"><option>Belum Bayar</option><option>Menunggu Bukti</option><option>Lunas</option><option>Terlambat</option></select></div></div>
+  <div class="mFooter"><button class="abtn abtn-cancel" onclick="closeModal('tagihanModal')">Batal</button><button class="abtn abtn-p" onclick="saveTagihan()">💾 Simpan</button></div>
+</div></div>
+
+<div id="confirmOverlay"><div class="confirmBox">
+  <div style="font-size:28px;margin-bottom:8px">⚠️</div>
+  <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px" id="confTitle">Konfirmasi</div>
+  <div style="font-size:12.5px;color:var(--ink3);margin-bottom:20px" id="confText">Yakin?</div>
+  <div style="display:flex;gap:8px;justify-content:center">
+    <button class="abtn abtn-cancel" onclick="closeConfirm()">Batal</button>
+    <button class="abtn" id="confYes" style="background:var(--r);color:#fff">Ya, Lanjutkan</button>
+  </div>
+</div></div>
+
+<!-- ═══════════════════════════════ JAVASCRIPT ═══════════════════════════════ -->
+<script>
+// ──────────────────────────────────────────────
+//  DATA & CONSTANTS
+// ──────────────────────────────────────────────
+const SK = 'kgp_v4';
+
+// ═══════════════════════════════════════════════════════════
+//  KEAMANAN PASSWORD — BACA PANDUAN SEBELUM MENGUBAH
+// ═══════════════════════════════════════════════════════════
+//  Password disimpan sebagai SHA-256 hash (tidak bisa dibaca balik).
+//  Password TIDAK PERNAH ditampilkan di layar atau form autofill.
+//
+//  Cara ubah password admin:
+//  1. Buka: https://emn178.github.io/online-tools/sha256.html
+//  2. Masukkan password baru di kolom Input, klik HASH
+//  3. Salin 64 karakter hasilnya (Output)
+//  4. Ganti nilai h:'...' di bawah dengan hash baru
+//  5. Simpan file (Ctrl+S) dan upload ulang ke website
+//
+//  Default password (WAJIB DIUBAH sebelum publish):
+//    owner   → GarciaOwner2025!
+//    admin   → GarciaAdmin2025!
+//    petugas → Petugas2025!
+// ═══════════════════════════════════════════════════════════
+const USERS = [
+  {u:'owner',   h:'57c597a4dcb358d0c3388c5f69a7908e0a4ed6395eecfae3474fb1ce0c6794a2', role:'owner',   nama:'Pemilik Kost'},
+  {u:'admin',   h:'a175e47cff7e5eccb498c98f336885224e9d0a939a380ae8974cd0072e8b7450', role:'admin',   nama:'Admin Garcia'},
+  {u:'petugas', h:'b6fcfed926c3f0f3d1c4791337f13d7b0be2135a87905752bf45260826d4c7b8', role:'petugas', nama:'Petugas'},
+];
+
+// SHA-256 via Web Crypto API (built-in browser, tanpa library tambahan)
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+const PERMS = {
+  owner:  ['view','add','edit','delete','reset','export','settings'],
+  admin:  ['view','add','edit','delete','export'],
+  petugas:['view','add'],
+};
+const RC = {owner:'#fbbf24',admin:'#a5b4fc',petugas:'#34d399'};
+const RI = {owner:'👑',admin:'🔧',petugas:'👤'};
+
+const TT = [
+  {bab:'I. ADMINISTRASI',isi:[
+    'Setiap penghuni wajib menyerahkan fotokopi identitas yang masih berlaku (KTP/SIM/Kartu Mahasiswa) kepada pengelola kost.',
+    'Penghuni dilarang menggunakan alamat kost untuk kepentingan pinjaman online, utang piutang, atau kepentingan hukum tanpa izin tertulis.',
+    'Tamu yang menginap wajib dilaporkan dan mendapatkan izin paling lambat 1 × 24 jam sebelum menginap.',
+  ]},
+  {bab:'II. KETERTIBAN & ETIKA',isi:[
+    'Dilarang keras membawa tamu pria masuk ke dalam kamar atau area lantai atas.',
+    'Tamu pria hanya diperbolehkan bertemu di area luar/depan garasi dan tidak diperkenankan naik ke atas.',
+    'Jam kunjung tamu maksimal pukul 22.00 WIB.',
+    'Dilarang keras melakukan perbuatan asusila di dalam area kost.',
+    'Dilarang mengganggu penghuni lain: gaduh, berisik, memutar musik keras.',
+    'Dilarang menggunakan atau meminjam barang milik penghuni lain tanpa izin.',
+  ]},
+  {bab:'III. LARANGAN KERAS',isi:[
+    'Dilarang keras memakai, menyimpan, atau mengedarkan narkoba, obat-obatan terlarang, dan minuman keras.',
+    'Dilarang membawa barang berbahaya, senjata tajam/api, atau bahan mudah terbakar.',
+    'Dilarang membawa hewan peliharaan dalam bentuk apapun.',
+    'Apabila menggunakan kompor gas, wajib mencabut tabung saat meninggalkan kamar.',
+  ]},
+  {bab:'IV. KEBERSIHAN & KERAPIHAN',isi:[
+    'Penghuni wajib menjaga kebersihan kamar dan seluruh fasilitas umum.',
+    'Sampah wajib dibuang ke tempat sampah yang tersedia (area bawah depan garasi).',
+    'Kendaraan wajib diparkir rapi di area parkir yang telah ditentukan.',
+    'Penghuni wajib menjaga dan merawat properti kamar serta fasilitas umum.',
+  ]},
+  {bab:'V. KEAMANAN & TANGGUNG JAWAB',isi:[
+    'Wajib menghemat air dan memastikan keran tertutup saat meninggalkan kamar.',
+    'Wajib mematikan seluruh peralatan elektronik saat meninggalkan kamar.',
+    'Penghuni bertanggung jawab penuh atas barang pribadi masing-masing.',
+    'Dalam keadaan darurat, pengelola berhak memasuki kamar dengan disaksikan pihak berwenang.',
+  ]},
+  {bab:'VI. SANKSI',isi:[
+    'Pelanggaran ringan akan diberikan teguran tertulis.',
+    'Pelanggaran berat (asusila, narkoba, tindakan kriminal) berakibat penghuni segera dikeluarkan.',
+    'Penghuni yang merusak fasilitas wajib mengganti kerugian sesuai nilai kerusakan.',
+  ]},
+];
+
+const DEF_KAMAR = [
+  {id:'KMR-001',nomor:'101',tipe:'Standard',harga:1200000,status:'Kosong',keterangan:'AC, Kamar Mandi Dalam'},
+  {id:'KMR-002',nomor:'102',tipe:'Standard',harga:1200000,status:'Kosong',keterangan:'AC, Kamar Mandi Dalam'},
+  {id:'KMR-003',nomor:'201',tipe:'Deluxe',  harga:1800000,status:'Kosong',keterangan:'AC, KM Dalam, Balkon'},
+  {id:'KMR-004',nomor:'202',tipe:'VIP',     harga:2500000,status:'Kosong',keterangan:'Full Furnished, Dapur'},
+];
+
+// ──────────────────────────────────────────────
+//  STATE
+// ──────────────────────────────────────────────
+let session=null, curPage='dashboard', logFilter='ALL', confirmCb=null;
+let customLogo=null;
+let kamar=[], penyewa=[], tagihan=[], logs=[], pendingForms=[];
+let formData={}, signatureImg=null, isDrawing=false, lastX=0, lastY=0;
+
+// ──────────────────────────────────────────────
+//  LOCALSTORAGE
+// ──────────────────────────────────────────────
+function saveData(){
+  try{
+    localStorage.setItem(SK,JSON.stringify({kamar,penyewa,tagihan,logs,pendingForms,customLogo,at:new Date().toISOString()}));
+    const el=document.getElementById('sbSaveTime');
+    if(el) el.textContent='Tersimpan '+new Date().toLocaleTimeString('id-ID');
+  }catch(e){}
+}
+function loadData(){
+  try{
+    const r=localStorage.getItem(SK);
+    if(r){const d=JSON.parse(r);kamar=d.kamar||[...DEF_KAMAR];penyewa=d.penyewa||[];tagihan=d.tagihan||[];logs=d.logs||[];pendingForms=d.pendingForms||[];customLogo=d.customLogo||null;return;}
+  }catch(e){}
+  kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];logs=[];pendingForms=[];customLogo=null;
+}
+loadData();
+loadCustomPasswords();
+setInterval(saveData,30000);
+
+// ──────────────────────────────────────────────
+//  HELPERS
+// ──────────────────────────────────────────────
+const fmt=n=>Number(n).toLocaleString('id-ID');
+const today=()=>new Date().toISOString().split('T')[0];
+const monthNow=()=>new Date().toISOString().slice(0,7);
+const can=p=>session&&(PERMS[session.role]||[]).includes(p);
+function genId(p,l){const m=l.reduce((x,r)=>{const n=parseInt((r.id||'').split('-').pop())||0;return Math.max(x,n);},0);return p+'-'+String(m+1).padStart(3,'0');}
+function addLog(j,m){logs.unshift({id:Date.now(),ts:new Date().toLocaleString('id-ID'),j,m,u:session?session.nama:'sistem'});if(logs.length>500)logs=logs.slice(0,500);}
+function bc(s){const m={Terisi:'b-g',Kosong:'b-g',Maintenance:'b-y',Aktif:'b-g','Tidak Aktif':'b-r',Lunas:'b-g','Belum Bayar':'b-y','Menunggu Bukti':'b-s',Terlambat:'b-r'};return'badge '+(m[s]||'b-b');}
+function lbs(j){const m={LOGIN:'background:#e0f2fe;color:#0369a1',LOGOUT:'background:#f1f5f9;color:#475569',KAMAR:'background:var(--mist2);color:var(--p)',PENYEWA:'background:var(--g2);color:var(--g)',BILLING:'background:var(--a2);color:var(--a)',APPROVAL:'background:var(--g2);color:var(--g)',ERROR:'background:var(--r2);color:var(--r)',EXPORT:'background:#fdf4ff;color:#9333ea',RESET:'background:#fff1f2;color:#e11d48',FORM:'background:#e0f2fe;color:#0369a1',NOTIF:'background:var(--g2);color:var(--g)'};return m[j]||'background:var(--mist);color:var(--ink3)';}
+
+// Toast
+function toast(msg,type='s'){
+  const icons={s:'✓',e:'✕',i:'ℹ'};
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;
+  t.innerHTML=`<div class="tIcon">${icons[type]||'•'}</div><div class="tMsg">${msg}</div>`;
+  document.getElementById('toastCont').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+// Screen nav
+function go(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(screen).classList.add('on');
+  if(screen==='sHome'){updateHomeStats();updateShareLink();applyLogo('homeLogoEl');}
+  if(screen==='sForm'){initForm();applyLogo('fNavLogoEl');}
+  if(screen==='sAdminLogin'){applyLogo('alLogoEl');}
+  window.scrollTo(0,0);
+}
+
+function applyLogo(elId){
+  const el=document.getElementById(elId);if(!el)return;
+  if(customLogo){el.innerHTML=`<img src="${customLogo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`;}
+  else{el.innerHTML={homeLogoEl:'🏠',fNavLogoEl:'🏠',alLogoEl:'🔐',sbLogoEl:'🏠'}[elId]||'🏠';}
+}
+
+// Share link
+function updateShareLink(){
+  const url=window.location.href.split('#')[0];
+  const el=document.getElementById('shareLinkUrl');
+  if(el) el.textContent=url;
+}
+function copyLink(){
+  const url=window.location.href.split('#')[0];
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.getElementById('btnCopyLink');
+    btn.textContent='✓ Tersalin!';btn.classList.add('copied');
+    toast('Link berhasil disalin!');
+    setTimeout(()=>{btn.textContent='Salin';btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    const el=document.getElementById('shareLinkUrl');
+    if(el){const r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);}
+    toast('Seleksi teks URL di atas lalu Copy','i');
+  });
+}
+function shareViaWA(){
+  const url=window.location.href.split('#')[0];
+  const msg=`*Formulir Pendaftaran Kost Garcia Putri* 🏠
+
+Halo! Silakan isi formulir pendaftaran penghuni melalui link berikut:
+
+${url}
+
+Tidak perlu login, langsung isi data, tanda tangan, dan download dokumen PDF.
+
+📍 Jl. HML Abdul Syukur No.5, Rawabuntu, Serpong, Tangerang Selatan`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// Home stats
+function updateHomeStats(){
+  document.getElementById('hs-kamar').textContent=kamar.length;
+  document.getElementById('hs-kosong').textContent=kamar.filter(k=>k.status==='Kosong').length;
+  document.getElementById('hs-penghuni').textContent=penyewa.filter(p=>p.status==='Aktif').length;
+  document.getElementById('hs-forms').textContent=pendingForms.length;
+}
+
+// ──────────────────────────────────────────────
+//  FORMULIR — TATA TERTIB CONTENT
+// ──────────────────────────────────────────────
+function buildTTHtml(){
+  return TT.map((b,i)=>`
+    <div style="margin-bottom:12px">
+      <div class="ttBab"><span class="ttBabNum">${i+1}</span>${b.bab}</div>
+      <ol class="ttList">${b.isi.map(x=>`<li>${x}</li>`).join('')}</ol>
+    </div>`).join('');
+}
+
+// ──────────────────────────────────────────────
+//  FORMULIR — LOGIC
+// ──────────────────────────────────────────────
+function initForm(){
+  formData={};signatureImg=null;
+  gotoStep(1);
+  document.getElementById('agreeChk').checked=false;
+  document.getElementById('btnS2Next').disabled=true;
+  document.getElementById('f1Tgl').value=today();
+  document.getElementById('f3Tanggal').value=today();
+  document.getElementById('f3Tempat').value='Tangerang Selatan';
+
+  // TT content
+  const ttBox=document.getElementById('ttBoxContent');
+  const existing=ttBox.querySelectorAll('.ttBab,.ttList');
+  existing.forEach(e=>e.parentElement?.remove?.());
+  ttBox.insertAdjacentHTML('beforeend',buildTTHtml());
+
+  // Kamar dropdown
+  const sel=document.getElementById('f1Kamar');
+  sel.innerHTML='<option value="">-- Pilih Kamar --</option>';
+  kamar.filter(k=>k.status==='Kosong').forEach(k=>{
+    const o=document.createElement('option');o.value=k.id;
+    o.textContent=`No.${k.nomor} (${k.tipe}) — Rp ${fmt(k.harga)}/bulan`;
+    sel.appendChild(o);
+  });
+  if(!kamar.filter(k=>k.status==='Kosong').length){
+    sel.innerHTML='<option value="">Tidak ada kamar tersedia</option>';
+  }
+  initCanvas();
+}
+
+function gotoStep(n){
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('fStep'+i);
+    if(el) el.style.display=i===n?'block':'none';
+  });
+  updateProgress(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProgress(active){
+  const labels=['Data Diri','Tata Tertib','Tanda Tangan','Download'];
+  const fills=[0,33,66,100];
+  const fill=document.getElementById('progressFill');
+  if(fill) fill.style.width=fills[active-1]+'%';
+  [1,2,3,4].forEach(i=>{
+    const step=document.getElementById('pstep'+i);
+    if(!step)return;
+    step.className='progStep';
+    const dot=step.querySelector('.progDot');
+    const num=step.querySelector('.progNum');
+    if(i<active){
+      step.classList.add('s-done');
+      dot.innerHTML='✓';
+    }else if(i===active){
+      step.classList.add('s-active');
+      dot.innerHTML=`<span class="progNum">${i}</span>`;
+    }else{
+      dot.innerHTML=`<span class="progNum">${i}</span>`;
+    }
+    const lbl=step.querySelector('.progStepLabel');
+    if(lbl){lbl.className='progStepLabel';if(i===active)lbl.classList.add('s-active');if(i<active)lbl.style.color='var(--g)';}
+  });
+}
+
+function validateStep1(){
+  const nama=document.getElementById('f1Nama').value.trim();
+  const nik=document.getElementById('f1NIK').value.trim();
+  const hp=document.getElementById('f1HP').value.trim();
+  const km=document.getElementById('f1Kamar').value;
+  const errs=[];
+  if(!nama) errs.push('Nama lengkap');
+  if(!nik)  errs.push('No. KTP/NIK');
+  if(!hp)   errs.push('No. HP/WhatsApp');
+  if(!km)   errs.push('Pilih kamar');
+  if(errs.length){toast('Lengkapi: '+errs.join(', '),'e');return;}
+
+  formData={
+    nama,ktp:nik,no_hp:hp,
+    email:document.getElementById('f1Email').value.trim(),
+    id_kamar:km,
+    tanggal_masuk:document.getElementById('f1Tgl').value||today(),
+    pekerjaan:document.getElementById('f1Kerja').value.trim(),
+    asal:document.getElementById('f1Asal').value.trim(),
+    kontak_darurat:document.getElementById('f1Darurat').value.trim(),
+    kendaraan:document.getElementById('f1Kendaraan').value.trim(),
+  };
+  document.getElementById('agreeNama').textContent=nama;
+  gotoStep(2);
+}
+
+function onAgree(){
+  const ok=document.getElementById('agreeChk').checked;
+  const btn=document.getElementById('btnS2Next');
+  btn.disabled=!ok;
+}
+
+// ──────────────────────────────────────────────
+//  SIGNATURE CANVAS
+// ──────────────────────────────────────────────
+function initCanvas(){
+  const canvas=document.getElementById('signCanvas');
+  const wrap=document.getElementById('signWrap');
+  if(!canvas||!wrap)return;
+
+  const ctx=canvas.getContext('2d');
+  const W=Math.min(wrap.clientWidth-clamp(24,28),660);
+  canvas.width=W;canvas.height=clamp(140,180);
+  function clamp(a,b){return Math.min(Math.max(wrap.clientWidth-28,a),b);}
+
+  ctx.strokeStyle='#1a1040';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+
+  const getXY=e=>{
+    const r=canvas.getBoundingClientRect();
+    if(e.touches&&e.touches.length){return{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};}
+    return{x:e.clientX-r.left,y:e.clientY-r.top};
+  };
+  const startDraw=e=>{e.preventDefault();isDrawing=true;const p=getXY(e);lastX=p.x;lastY=p.y;};
+  const draw=e=>{
+    if(!isDrawing)return;e.preventDefault();
+    const p=getXY(e);
+    ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();
+    lastX=p.x;lastY=p.y;
+    signatureImg=canvas.toDataURL();
+    const st=document.getElementById('signStatus');
+    if(st){st.textContent='✓ Sudah ditandatangani';st.className='signStatusText signed';}
+    wrap.classList.add('has-sig');
+  };
+  const stopDraw=()=>{isDrawing=false;};
+
+  canvas.removeEventListener('mousedown',startDraw);
+  canvas.removeEventListener('mousemove',draw);
+  canvas.removeEventListener('mouseup',stopDraw);
+  canvas.removeEventListener('touchstart',startDraw);
+  canvas.removeEventListener('touchmove',draw);
+  canvas.removeEventListener('touchend',stopDraw);
+
+  canvas.addEventListener('mousedown',startDraw);
+  canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',stopDraw);
+  canvas.addEventListener('mouseleave',stopDraw);
+  canvas.addEventListener('touchstart',startDraw,{passive:false});
+  canvas.addEventListener('touchmove',draw,{passive:false});
+  canvas.addEventListener('touchend',stopDraw);
+}
+
+function clearSign(){
+  const canvas=document.getElementById('signCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  signatureImg=null;
+  const st=document.getElementById('signStatus');
+  if(st){st.textContent='Belum ditandatangani';st.className='signStatusText';}
+  document.getElementById('signWrap').classList.remove('has-sig');
+}
+
+function submitForm(){
+  formData.tempat_ttd=document.getElementById('f3Tempat').value||'Tangerang Selatan';
+  formData.tanggal_ttd=document.getElementById('f3Tanggal').value||today();
+  formData.signature=signatureImg;
+  formData.id='FRM-'+Date.now();
+  formData.submitted_at=new Date().toISOString();
+  formData.reviewed=false;
+
+  pendingForms.unshift({...formData});
+  saveData();
+
+  document.getElementById('successName').textContent=formData.nama;
+  gotoStep(4);
+  toast('Pendaftaran berhasil dikirim! 🎉');
+}
+
+function resetAndGoHome(){go('sHome');}
+
+// ──────────────────────────────────────────────
+//  PDF GENERATOR
+// ──────────────────────────────────────────────
+function genPDF(data){
+  if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF not loaded');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const M=16,PW=210,CW=PW-M*2;
+  let y=14;
+  const sp=(h=5)=>{y+=h;};
+  const chk=(n=20)=>{if(y+n>285){doc.addPage();y=16;}};
+
+  // Header bar
+  doc.setFillColor(79,70,229);doc.rect(0,0,PW,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');doc.setFontSize(14);
+  doc.text('FORMULIR PENDAFTARAN PENGHUNI',PW/2,12,{align:'center'});
+  doc.setFontSize(11);doc.text('KOST GARCIA PUTRI',PW/2,20,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  doc.text('Jl. HML Abdul Syukur No.5 RT.001/001, Kel.Rawabuntu, Kec.Serpong, Kota Tangerang Selatan 15318',PW/2,27,{align:'center'});
+  doc.setFontSize(7.5);
+  doc.text(`ID: ${data.id||'-'} | Tanggal Daftar: ${(data.submitted_at||'').slice(0,10)||today()}`,PW/2,33.5,{align:'center'});
+  doc.setTextColor(0,0,0);
+  y=46;
+
+  // Section A: Data Diri
+  doc.setFillColor(238,235,255);doc.rect(M,y-4,CW,8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(79,70,229);
+  doc.text('A. DATA DIRI PENGHUNI',M+3,y+1);doc.setTextColor(0,0,0);y+=10;
+
+  const km=kamar.find(k=>k.id===data.id_kamar);
+  const fields=[
+    ['Nama Lengkap',data.nama||'-'],['No. KTP / NIK',data.ktp||'-'],
+    ['No. HP / WhatsApp',data.no_hp||'-'],['Email',data.email||'-'],
+    ['Kamar',km?`No.${km.nomor} (${km.tipe}) — Rp ${fmt(km.harga)}/bulan`:(data.id_kamar||'-')],
+    ['Tanggal Masuk',data.tanggal_masuk||'-'],['Pekerjaan',data.pekerjaan||'-'],
+    ['Asal Kota',data.asal||'-'],['Kontak Darurat',data.kontak_darurat||'-'],
+    ['Kendaraan',data.kendaraan||'-'],
+  ];
+  doc.setFontSize(8.5);
+  fields.forEach(([lbl,val])=>{
+    chk(9);
+    doc.setFont('helvetica','normal');doc.setTextColor(100);doc.text(lbl,M+2,y);
+    doc.setTextColor(20);doc.setFont('helvetica','bold');doc.text(': '+val,M+48,y);
+    doc.setDrawColor(220);doc.line(M,y+2.5,PW-M,y+2.5);y+=8;
+  });
+
+  sp(6);chk(18);
+  // Section B: Tata Tertib
+  doc.setFillColor(238,235,255);doc.rect(M,y-4,CW,8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(79,70,229);
+  doc.text('B. TATA TERTIB PENGHUNI KOST GARCIA PUTRI',M+3,y+1);doc.setTextColor(0,0,0);y+=11;
+
+  doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(100);
+  const notice=doc.splitTextToSize('Dokumen ini berlaku bagi seluruh penghuni dan wajib dipatuhi demi menjaga keamanan, kenyamanan, dan ketertiban bersama.',CW);
+  doc.text(notice,M,y);y+=notice.length*4.5+4;
+
+  TT.forEach(bab=>{
+    chk(14);
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(79,70,229);
+    doc.text(bab.bab,M,y);doc.setTextColor(0);y+=5;
+    bab.isi.forEach((item,ii)=>{
+      doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(50);
+      const ls=doc.splitTextToSize((ii+1)+'. '+item,CW-4);
+      chk(ls.length*4.2+2);doc.text(ls,M+3,y);y+=ls.length*4.2;
+    });
+    sp(3);
+  });
+
+  sp(5);chk(50);
+  // Section C: Tanda Tangan
+  doc.setFillColor(238,235,255);doc.rect(M,y-4,CW,8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(79,70,229);
+  doc.text('C. PERNYATAAN & TANDA TANGAN',M+3,y+1);doc.setTextColor(0,0,0);y+=12;
+
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(50);
+  const decl=doc.splitTextToSize('Saya yang bertanda tangan di bawah ini menyatakan telah membaca, memahami, dan menyetujui seluruh Tata Tertib Penghuni Kost Garcia Putri. Saya bersedia mematuhi semua peraturan dan menerima konsekuensi atas pelanggaran.',CW);
+  doc.text(decl,M,y);y+=decl.length*4.5+10;chk(50);
+
+  const bw=(CW-10)/2;
+  [[M,'Penghuni'],[M+bw+10,'Pengelola / Pemilik']].forEach(([x,lbl])=>{
+    doc.setDrawColor(180);doc.rect(x,y,bw,46);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(80);
+    doc.text(lbl,x+bw/2,y+6,{align:'center'});
+    doc.text(`${data.tempat_ttd||'Tangerang Selatan'}, ${data.tanggal_ttd||today()}`,x+bw/2,y+13,{align:'center'});
+  });
+  // Add signature image for penghuni
+  if(data.signature){
+    try{doc.addImage(data.signature,'PNG',M+3,y+15,bw-6,25);}catch(e){}
+  }
+  [M,M+bw+10].forEach((x,i)=>{
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(80);
+    const n=i===0?(data.nama||'_____________'):'_________________________';
+    doc.text('( '+n+' )',x+bw/2,y+43,{align:'center'});
+    doc.text('Nama Jelas & Tanda Tangan',x+bw/2,y+46.5,{align:'center'});
+  });
+
+  return doc;
+}
+
+function downloadPDF(){
+  try{
+    const doc=genPDF(formData);
+    doc.save(`Formulir_${(formData.nama||'Penghuni').replace(/\s+/g,'_')}_${today()}.pdf`);
+    toast('📥 PDF berhasil didownload!');
+    addLog('FORM',formData.nama+' download formulir PDF');
+    saveData();
+  }catch(e){console.error(e);toast('Gagal generate PDF. Coba lagi.','e');}
+}
+
+function printDoc(){
+  try{
+    const doc=genPDF(formData);
+    const blob=doc.output('blob');
+    const url=URL.createObjectURL(blob);
+    const w=window.open(url,'_blank');
+    if(w) w.onload=()=>{w.print();};
+    toast('Membuka halaman cetak...');
+  }catch(e){window.print();}
+}
+
+function shareWASuccess(){
+  const km=kamar.find(k=>k.id===formData.id_kamar);
+  const noBersih=(formData.no_hp||'').replace(/[^0-9]/g,'');
+  const noWA=noBersih.startsWith('0')?'62'+noBersih.slice(1):noBersih;
+  const siteUrl=window.location.href.split('#')[0];
+  const msg=`*Selamat Datang di Kost Garcia Putri!* 🏠
+
+Halo, *${formData.nama}*!
+
+Terima kasih telah mendaftar. Berikut ringkasan pendaftaran Anda:
+
+📋 *Detail:*
+• Kamar: No.${km?km.nomor:'-'} (${km?km.tipe:'-'})
+• Harga: Rp ${km?fmt(km.harga):'-'}/bulan
+• Tanggal Masuk: ${formData.tanggal_masuk}
+• ID Formulir: ${formData.id}
+
+📄 Silakan download formulir PDF di link berikut:
+${siteUrl}
+
+📍 *Alamat:*
+Jl. HML Abdul Syukur No.5 RT.001/001
+Kel. Rawabuntu, Kec. Serpong
+Kota Tangerang Selatan 15318
+
+Sampai jumpa saat check-in! 😊
+_Pengelola Kost Garcia Putri_`;
+  window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(msg)}`,'_blank');
+  toast('📲 Membuka WhatsApp...');
+}
+
+// ──────────────────────────────────────────────
+//  ADMIN AUTH
+// ──────────────────────────────────────────────
+function toggleAlPass(){
+  const i=document.getElementById('alPass');
+  const b=document.getElementById('alEye');
+  i.type=i.type==='password'?'text':'password';
+  b.textContent=i.type==='password'?'👁':'🙈';
+}
+
+// Rate limiting: max 5 percobaan login, tunggu 30 detik
+let loginAttempts=0, loginLocked=false, loginTimer=null;
+
+async function doLogin(){
+  if(loginLocked){toast('Terlalu banyak percobaan. Tunggu 30 detik.','e');return;}
+  const u=document.getElementById('alUser').value.trim();
+  const p=document.getElementById('alPass').value;
+  if(!u||!p){toast('Username dan password wajib diisi','e');return;}
+
+  const btn=document.getElementById('alLoginBtn');
+  btn.textContent='⏳ Memverifikasi...';btn.disabled=true;
+
+  const hashed=await sha256(p);
+  const user=USERS.find(x=>x.u===u&&x.h===hashed);
+
+  btn.textContent='MASUK DASHBOARD';btn.disabled=false;
+
+  if(user){
+    loginAttempts=0;
+    session=user;
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+    document.getElementById('sAdmin').classList.add('on');
+    buildAdminUI();
+    navTo('dashboard');
+    addLog('LOGIN',user.nama+' masuk sistem');saveData();
+    toast('Selamat datang, '+user.nama+'! 👋');
+  }else{
+    loginAttempts++;
+    document.getElementById('alCard').classList.add('shake');
+    setTimeout(()=>document.getElementById('alCard').classList.remove('shake'),500);
+    if(loginAttempts>=5){
+      loginLocked=true;
+      toast('Akun dikunci 30 detik. Terlalu banyak percobaan.','e');
+      let sisa=30;
+      const lockBtn=document.getElementById('alLoginBtn');
+      loginTimer=setInterval(()=>{
+        sisa--;
+        lockBtn.textContent=`Tunggu ${sisa}s...`;
+        if(sisa<=0){clearInterval(loginTimer);loginLocked=false;loginAttempts=0;lockBtn.textContent='MASUK DASHBOARD';}
+      },1000);
+    }else{
+      toast(`Username atau password salah. Percobaan ${loginAttempts}/5.`,'e');
+    }
+  }
+}
+document.getElementById('alPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('alUser').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('alPass').focus();});
+
+function doLogout(){
+  saveData();addLog('LOGOUT',session.nama+' keluar');
+  session=null;
+  document.getElementById('alUser').value='';document.getElementById('alPass').value='';
+  go('sHome');toast('Data tersimpan. Sampai jumpa!','i');
+}
+
+// ──────────────────────────────────────────────
+//  ADMIN SIDEBAR MOBILE
+// ──────────────────────────────────────────────
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sbOverlay');
+  if(sb.classList.contains('hidden')){
+    sb.classList.remove('hidden');ov.classList.add('on');
+  }else{
+    sb.classList.add('hidden');ov.classList.remove('on');
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('sbOverlay').classList.remove('on');
+}
+// Set sidebar state based on width
+function checkSidebarBreakpoint(){
+  const sb=document.getElementById('sidebar');
+  if(!sb)return;
+  if(window.innerWidth<=768){sb.classList.add('hidden');}
+  else{sb.classList.remove('hidden');document.getElementById('sbOverlay').classList.remove('on');}
+}
+window.addEventListener('resize',checkSidebarBreakpoint);
+
+// ──────────────────────────────────────────────
+//  ADMIN BUILD UI
+// ──────────────────────────────────────────────
+const ANAV=[
+  {id:'dashboard',   icon:'⊞', label:'Dashboard'},
+  {id:'kamar',       icon:'🏠', label:'Kamar'},
+  {id:'penyewa',     icon:'👥', label:'Penyewa'},
+  {id:'billing',     icon:'💳', label:'Billing & Tagihan'},
+  {id:'pendaftaran', icon:'📬', label:'Pendaftaran Masuk', badge:true},
+  {id:'tatatertib',  icon:'📋', label:'Tata Tertib'},
+  {id:'logs',        icon:'📜', label:'Log Aktivitas'},
+  {id:'settings',    icon:'⚙',  label:'Pengaturan'},
+];
+const PAGE_NAMES={dashboard:'Dashboard',kamar:'Manajemen Kamar',penyewa:'Data Penyewa',billing:'Billing & Tagihan',pendaftaran:'Pendaftaran Masuk',tatatertib:'Tata Tertib',logs:'Log Aktivitas',settings:'Pengaturan Sistem'};
+
+function buildAdminUI(){
+  document.getElementById('sbUserName').textContent=session.nama;
+  document.getElementById('sbUserRole').textContent=session.role;
+  document.getElementById('sbUserRole').style.color=RC[session.role]||'#a5b4fc';
+  const av=document.getElementById('sbAvatar');
+  av.textContent=RI[session.role]||'👤';
+  av.style.background=`linear-gradient(135deg,${RC[session.role]}44,${RC[session.role]}22)`;
+  applyLogo('sbLogoEl');
+  buildNav();
+  updateClock();
+  checkSidebarBreakpoint();
+}
+
+function buildNav(){
+  const nav=document.getElementById('sbNav');nav.innerHTML='';
+  ANAV.forEach(n=>{
+    const cnt=n.badge?pendingForms.filter(f=>!f.reviewed).length:0;
+    const b=document.createElement('button');
+    b.className='sbBtn'+(curPage===n.id?' on':'');b.dataset.page=n.id;
+    b.innerHTML=`<span style="font-size:15px;width:18px;text-align:center;flex-shrink:0">${n.icon}</span>${n.label}${cnt>0?`<span class="sbBadge">${cnt}</span>`:''}`;
+    b.onclick=()=>{navTo(n.id);if(window.innerWidth<=768)closeSidebar();};
+    nav.appendChild(b);
+  });
+}
+
+function navTo(page){
+  curPage=page;
+  document.querySelectorAll('.sbBtn').forEach(b=>b.classList.toggle('on',b.dataset.page===page));
+  document.querySelectorAll('.aPage').forEach(p=>p.classList.remove('on'));
+  const pg=document.getElementById('ap-'+page);if(pg)pg.classList.add('on');
+  document.getElementById('topTitle').textContent=PAGE_NAMES[page]||page;
+  renderPage(page);
+}
+
+function renderPage(p){
+  const fns={dashboard:renderDash,kamar:renderKamar,penyewa:renderPenyewa,billing:renderBilling,pendaftaran:renderPendaftaran,tatatertib:renderTatatertib,logs:renderLogs,settings:renderSettings};
+  if(fns[p])fns[p]();
+}
+
+function updateClock(){
+  const el=document.getElementById('topDate');
+  if(el)el.textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' • '+new Date().toLocaleTimeString('id-ID');
+  setTimeout(updateClock,1000);
+}
+
+// ──────────────────────────────────────────────
+//  DASHBOARD
+// ──────────────────────────────────────────────
+function renderDash(){
+  const terisi=kamar.filter(k=>k.status==='Terisi').length;
+  const kosong=kamar.filter(k=>k.status==='Kosong').length;
+  const aktif=penyewa.filter(p=>p.status==='Aktif').length;
+  const lunas=tagihan.filter(t=>t.status==='Lunas').reduce((a,b)=>a+b.jumlah,0);
+  const pending=tagihan.filter(t=>t.status!=='Lunas').reduce((a,b)=>a+b.jumlah,0);
+  const newForms=pendingForms.filter(f=>!f.reviewed).length;
+  const occ=kamar.length?Math.round(terisi/kamar.length*100):0;
+  const pg=document.getElementById('ap-dashboard');
+  pg.innerHTML=`
+  <div class="heroB">
+    <div class="heroBTitle">Kost Garcia Putri</div>
+    <div class="heroBAddr">Jl. HML Abdul Syukur No.5, Rawabuntu, Serpong, Tangerang Selatan 15318</div>
+    <div class="heroBStats">
+      <div class="heroBStat"><div class="heroBStatV">${occ}%</div><div class="heroBStatL">Hunian</div></div>
+      <div class="heroBStat"><div class="heroBStatV">${terisi}/${kamar.length}</div><div class="heroBStatL">Terisi</div></div>
+      <div class="heroBStat"><div class="heroBStatV">${aktif}</div><div class="heroBStatL">Penyewa Aktif</div></div>
+      <div class="heroBStat"><div class="heroBStatV">${newForms}</div><div class="heroBStatL">Formulir Baru</div></div>
+    </div>
+  </div>
+  <div class="sg sg4" style="margin-bottom:16px">
+    <div class="stCard"><div class="stIcon" style="background:#ede9f8">🏠</div><div class="stVal" style="color:var(--p)">${kamar.length}</div><div class="stLabel">Total Kamar</div><div class="stSub">${terisi} terisi, ${kosong} kosong</div></div>
+    <div class="stCard"><div class="stIcon" style="background:#e0f2fe">👥</div><div class="stVal" style="color:var(--sky)">${aktif}</div><div class="stLabel">Penyewa Aktif</div><div class="stSub">penghuni saat ini</div></div>
+    <div class="stCard"><div class="stIcon" style="background:var(--g2)">💰</div><div class="stVal" style="color:var(--g)">Rp ${fmt(lunas)}</div><div class="stLabel">Revenue Lunas</div><div class="stSub">total terkumpul</div></div>
+    <div class="stCard"><div class="stIcon" style="background:var(--a2)">📬</div><div class="stVal" style="color:var(--a)">${newForms}</div><div class="stLabel">Formulir Baru</div><div class="stSub">menunggu review</div></div>
+  </div>
+  <div class="sg sg2">
+    <div class="stCard">
+      <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:10px">Status Kamar Real-time</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:7px" id="dOccGrid"></div>
+    </div>
+    <div class="stCard">
+      <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">Pendaftaran Baru <span id="dPendingBadge"></span></div>
+      <div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px">Formulir dari penghuni online</div>
+      <div id="dPendingList" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:7px"></div>
+    </div>
+  </div>`;
+
+  // Occ grid
+  const cm={Terisi:{bg:'#ede9f8',bc:'var(--p)',c:'#4338ca'},Kosong:{bg:var_g2_hex,bc:'#10b981',c:'#047857'},Maintenance:{bg:'#fef3c7',bc:'#f59e0b',c:'#b45309'}};
+  function var_g2_hex(){return '#d1fae5';}
+  const og=document.getElementById('dOccGrid');
+  if(og) og.innerHTML=kamar.length===0?'<div style="color:var(--ink3);font-size:12px;grid-column:1/-1;padding:20px;text-align:center">Belum ada kamar</div>':
+    kamar.map(k=>{const c={Terisi:{bg:'#ede9f8',c:'#4338ca'},Kosong:{bg:'#d1fae5',c:'#047857'},Maintenance:{bg:'#fef3c7',c:'#b45309'}}[k.status]||{bg:'#f1f5f9',c:'#475569'};
+      return`<div style="background:${c.bg};border-radius:9px;padding:9px 11px;text-align:center">
+        <div style="font-weight:800;font-size:14px;color:${c.c}">No.${k.nomor}</div>
+        <div style="font-size:10px;color:var(--ink3)">${k.tipe}</div>
+        <div style="font-size:9.5px;color:${c.c};font-weight:700;margin-top:2px">${k.status}</div></div>`;}).join('');
+
+  // Pending list
+  const pl=document.getElementById('dPendingList');
+  const pb=document.getElementById('dPendingBadge');
+  const unrev=pendingForms.filter(f=>!f.reviewed);
+  if(pb){pb.innerHTML=unrev.length>0?`<span class="sbBadge">${unrev.length}</span>`:''; }
+  if(pl){
+    if(pendingForms.length===0){pl.innerHTML='<div style="color:var(--ink3);font-size:12px;text-align:center;padding:20px">Belum ada pendaftaran</div>';return;}
+    pl.innerHTML=pendingForms.slice(0,5).map(f=>{
+      const km=kamar.find(k=>k.id===f.id_kamar);
+      return`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;background:${f.reviewed?'var(--mist)':'#fffbeb'};border:1px solid ${f.reviewed?'var(--border)':'#fcd34d'}">
+        <div style="min-width:0">
+          <div style="font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.nama}</div>
+          <div style="font-size:10px;color:var(--ink3)">${km?'No.'+km.nomor:'-'} • ${(f.submitted_at||'').slice(0,10)||'-'}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          ${!f.reviewed?`<button class="abtn abtn-g" onclick="reviewFormId('${f.id}')">✓</button>`:'<span style="font-size:10px;color:var(--g)">✓</span>'}
+          <button class="abtn abtn-pdf" onclick="dlFormPDF('${f.id}')">PDF</button>
+        </div></div>`;}).join('');
+  }
+}
+
+// ──────────────────────────────────────────────
+//  KAMAR
+// ──────────────────────────────────────────────
+function renderKamar(){
+  const pg=document.getElementById('ap-kamar');
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Manajemen Kamar</div><div class="aSub">${kamar.length} unit terdaftar</div></div>
+    ${can('add')?`<button class="abtn abtn-p" onclick="openKamarModal()">+ Tambah Kamar</button>`:''}
+  </div>
+  <div class="tblWrap"><div class="tblScroll"><table>
+    <thead><tr><th>ID</th><th>Nomor</th><th>Tipe</th><th>Harga/Bulan</th><th>Status</th><th>Keterangan</th><th>Aksi</th></tr></thead>
+    <tbody>${kamar.length===0?`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--ink3)">Belum ada kamar</td></tr>`:
+    kamar.map(k=>`<tr>
+      <td><span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${k.id}</span></td>
+      <td><strong>No.${k.nomor}</strong></td>
+      <td>${k.tipe}</td>
+      <td><strong style="color:var(--g)">Rp ${fmt(k.harga)}</strong></td>
+      <td><span class="${bc(k.status)}">${k.status}</span></td>
+      <td style="color:var(--ink3);font-size:11px">${k.keterangan}</td>
+      <td><div style="display:flex;gap:4px">
+        ${can('edit')?`<button class="abtn abtn-e" onclick="openKamarModal('${k.id}')">Edit</button>`:''}
+        ${can('delete')?`<button class="abtn abtn-d" onclick="hapusKamar('${k.id}')">Hapus</button>`:''}
+      </div></td></tr>`).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openKamarModal(id=null){
+  document.getElementById('kamarEId').value=id||'';
+  if(id){
+    const k=kamar.find(x=>x.id===id);
+    document.getElementById('kamarMT').textContent='Edit Kamar';
+    document.getElementById('mkNomor').value=k.nomor;
+    document.getElementById('mkTipe').value=k.tipe;
+    document.getElementById('mkHarga').value=k.harga;
+    document.getElementById('mkStatus').value=k.status;
+    document.getElementById('mkKet').value=k.keterangan;
+  }else{
+    document.getElementById('kamarMT').textContent='Tambah Kamar';
+    ['mkNomor','mkHarga','mkKet'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('mkTipe').value='Standard';
+    document.getElementById('mkStatus').value='Kosong';
+  }
+  openModal('kamarModal');
+}
+
+function saveKamar(){
+  const nomor=document.getElementById('mkNomor').value.trim();
+  const tipe=document.getElementById('mkTipe').value;
+  const harga=Number(document.getElementById('mkHarga').value);
+  const status=document.getElementById('mkStatus').value;
+  const keterangan=document.getElementById('mkKet').value.trim();
+  const id=document.getElementById('kamarEId').value;
+  if(!nomor){toast('Nomor kamar wajib diisi','e');return;}
+  if(!harga||harga<=0){toast('Harga tidak valid','e');return;}
+  if(!id&&kamar.find(k=>k.nomor===nomor)){toast('Nomor kamar sudah ada','e');return;}
+  if(id){kamar=kamar.map(k=>k.id===id?{...k,nomor,tipe,harga,status,keterangan}:k);addLog('KAMAR','Kamar No.'+nomor+' diupdate');}
+  else{kamar.push({id:genId('KMR',kamar),nomor,tipe,harga,status,keterangan});addLog('KAMAR','Kamar No.'+nomor+' ditambahkan');}
+  saveData();closeModal('kamarModal');renderKamar();toast('Kamar disimpan');
+}
+
+function hapusKamar(id){
+  const k=kamar.find(x=>x.id===id);
+  if(penyewa.find(p=>p.id_kamar===id&&p.status==='Aktif')){toast('Ada penyewa aktif di kamar ini!','e');return;}
+  showConfirm('Hapus Kamar','Hapus kamar No.'+k.nomor+'?',()=>{
+    kamar=kamar.filter(x=>x.id!==id);addLog('KAMAR','Kamar No.'+k.nomor+' dihapus');
+    saveData();renderKamar();toast('Kamar dihapus','i');
+  });
+}
+
+// ──────────────────────────────────────────────
+//  PENYEWA
+// ──────────────────────────────────────────────
+function renderPenyewa(){
+  const aktif=penyewa.filter(p=>p.status==='Aktif').length;
+  const pg=document.getElementById('ap-penyewa');
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Data Penyewa</div><div class="aSub">${aktif} aktif dari ${penyewa.length} total</div></div>
+    ${can('add')?`<button class="abtn abtn-p" onclick="openPenyewaModal()">+ Tambah Penyewa</button>`:''}
+  </div>
+  <div class="tblWrap"><div class="tblScroll"><table>
+    <thead><tr><th>ID</th><th>Nama</th><th>Kamar</th><th>No HP</th><th>KTP</th><th>Tgl Masuk</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>${penyewa.length===0?`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--ink3)">Belum ada data penyewa</td></tr>`:
+    penyewa.map(p=>{const km=kamar.find(k=>k.id===p.id_kamar);return`<tr>
+      <td><span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${p.id}</span></td>
+      <td><strong>${p.nama}</strong></td>
+      <td><strong style="color:var(--p)">No.${km?km.nomor:'?'}</strong></td>
+      <td>${p.no_hp||'-'}</td>
+      <td style="font-size:10.5px">${p.ktp||'-'}</td>
+      <td style="font-size:11px">${p.tanggal_masuk||'-'}</td>
+      <td><span class="${bc(p.status)}">${p.status}</span></td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">
+        ${can('edit')?`<button class="abtn abtn-e" onclick="openPenyewaModal('${p.id}')">Edit</button>`:''}
+        <button class="abtn abtn-pdf" onclick="dlFormPenyewa('${p.id}')">📄 PDF</button>
+        <button class="abtn abtn-wa" onclick="waForPenyewa('${p.id}')">📲 WA</button>
+        ${can('delete')?`<button class="abtn abtn-d" onclick="hapusPenyewa('${p.id}')">Hapus</button>`:''}
+      </div></td></tr>`;}).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openPenyewaModal(id=null){
+  const sel=document.getElementById('mpKamar');
+  sel.innerHTML='<option value="">-- Pilih Kamar --</option>';
+  const list=id?kamar:kamar.filter(k=>k.status==='Kosong');
+  list.forEach(k=>{const o=document.createElement('option');o.value=k.id;o.textContent=`No.${k.nomor} (${k.tipe}) — Rp ${fmt(k.harga)}/bln`;sel.appendChild(o);});
+  document.getElementById('penyewaEId').value=id||'';
+  if(id){
+    const p=penyewa.find(x=>x.id===id);
+    document.getElementById('penyewaMT').textContent='Edit Penyewa';
+    document.getElementById('mpNama').value=p.nama;
+    document.getElementById('mpKamar').value=p.id_kamar;
+    document.getElementById('mpHP').value=p.no_hp||'';
+    document.getElementById('mpKTP').value=p.ktp||'';
+    document.getElementById('mpTgl').value=p.tanggal_masuk||today();
+    document.getElementById('mpKerja').value=p.pekerjaan||'';
+    document.getElementById('mpAsal').value=p.asal||'';
+    document.getElementById('mpDarurat').value=p.kontak_darurat||'';
+    document.getElementById('mpKendaraan').value=p.kendaraan||'';
+    document.getElementById('mpStatus').value=p.status;
+  }else{
+    document.getElementById('penyewaMT').textContent='Tambah Penyewa';
+    ['mpNama','mpHP','mpKTP','mpKerja','mpAsal','mpDarurat','mpKendaraan'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('mpTgl').value=today();
+    document.getElementById('mpStatus').value='Aktif';
+  }
+  openModal('penyewaModal');
+}
+
+function savePenyewa(){
+  const nama=document.getElementById('mpNama').value.trim();
+  const id_kamar=document.getElementById('mpKamar').value;
+  const no_hp=document.getElementById('mpHP').value.trim();
+  const ktp=document.getElementById('mpKTP').value.trim();
+  const tanggal_masuk=document.getElementById('mpTgl').value;
+  const pekerjaan=document.getElementById('mpKerja').value.trim();
+  const asal=document.getElementById('mpAsal').value.trim();
+  const kontak_darurat=document.getElementById('mpDarurat').value.trim();
+  const kendaraan=document.getElementById('mpKendaraan').value.trim();
+  const status=document.getElementById('mpStatus').value;
+  const id=document.getElementById('penyewaEId').value;
+  if(!nama){toast('Nama wajib diisi','e');return;}
+  if(!id_kamar){toast('Pilih kamar','e');return;}
+  if(!id){
+    const km=kamar.find(k=>k.id===id_kamar);
+    if(!km||km.status!=='Kosong'){toast('Kamar tidak tersedia','e');return;}
+    if(penyewa.find(p=>p.id_kamar===id_kamar&&p.status==='Aktif')){toast('Kamar sudah terisi!','e');return;}
+    penyewa.push({id:genId('PNY',penyewa),nama,id_kamar,no_hp,ktp,tanggal_masuk,status,pekerjaan,asal,kontak_darurat,kendaraan});
+    kamar=kamar.map(k=>k.id===id_kamar?{...k,status:'Terisi'}:k);
+    addLog('PENYEWA',nama+' masuk kamar No.'+(kamar.find(k=>k.id===id_kamar)?.nomor||''));
+  }else{
+    const lama=penyewa.find(x=>x.id===id);
+    penyewa=penyewa.map(p=>p.id===id?{...p,nama,id_kamar,no_hp,ktp,tanggal_masuk,status,pekerjaan,asal,kontak_darurat,kendaraan}:p);
+    if(lama.id_kamar!==id_kamar){kamar=kamar.map(k=>k.id===lama.id_kamar?{...k,status:'Kosong'}:k);kamar=kamar.map(k=>k.id===id_kamar?{...k,status:'Terisi'}:k);}
+    if(status==='Tidak Aktif')kamar=kamar.map(k=>k.id===id_kamar?{...k,status:'Kosong'}:k);
+    addLog('PENYEWA',nama+' diupdate');
+  }
+  saveData();closeModal('penyewaModal');renderPenyewa();toast('Data penyewa disimpan');
+}
+
+function hapusPenyewa(id){
+  const p=penyewa.find(x=>x.id===id);
+  showConfirm('Hapus Penyewa','Hapus penyewa '+p.nama+'?',()=>{
+    penyewa=penyewa.filter(x=>x.id!==id);
+    kamar=kamar.map(k=>k.id===p.id_kamar?{...k,status:'Kosong'}:k);
+    addLog('PENYEWA',p.nama+' dihapus');saveData();renderPenyewa();toast('Penyewa dihapus','i');
+  });
+}
+
+function dlFormPenyewa(id){
+  const p=penyewa.find(x=>x.id===id);
+  const km=kamar.find(k=>k.id===p.id_kamar);
+  try{
+    const doc=genPDF({...p,tempat_ttd:'Tangerang Selatan',tanggal_ttd:today(),id:p.id,submitted_at:p.tanggal_masuk||today()});
+    doc.save(`Formulir_${p.nama.replace(/\s+/g,'_')}_${today()}.pdf`);
+    addLog('EXPORT','Formulir PDF '+p.nama+' didownload');saveData();toast('📥 PDF didownload');
+  }catch(e){toast('Gagal PDF','e');}
+}
+
+function waForPenyewa(id){
+  const p=penyewa.find(x=>x.id===id);
+  const km=kamar.find(k=>k.id===p.id_kamar);
+  const no=(p.no_hp||'').replace(/[^0-9]/g,'');
+  const waNo=no.startsWith('0')?'62'+no.slice(1):no;
+  const msg=`*Informasi Kost Garcia Putri* 🏠\n\nHalo, *${p.nama}*!\n\nBerikut detail kamar Anda:\n• Kamar: No.${km?km.nomor:'-'} (${km?km.tipe:'-'})\n• Harga: Rp ${km?fmt(km.harga):'-'}/bulan\n\n📍 Jl. HML Abdul Syukur No.5, Rawabuntu, Serpong, Tangerang Selatan\n\n_Pengelola Kost Garcia Putri_`;
+  window.open(`https://wa.me/${waNo}?text=${encodeURIComponent(msg)}`,'_blank');
+  toast('📲 Membuka WhatsApp');
+}
+
+// ──────────────────────────────────────────────
+//  BILLING
+// ──────────────────────────────────────────────
+function renderBilling(){
+  const lunas=tagihan.filter(t=>t.status==='Lunas').reduce((a,b)=>a+b.jumlah,0);
+  const pending=tagihan.filter(t=>t.status!=='Lunas').reduce((a,b)=>a+b.jumlah,0);
+  const terlmbt=tagihan.filter(t=>t.status==='Terlambat').length;
+  const pg=document.getElementById('ap-billing');
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Billing & Tagihan</div><div class="aSub">${tagihan.length} total tagihan</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${can('add')?`<button class="abtn abtn-s" onclick="genTagihan()">⚡ Generate Tagihan</button>`:''}
+      ${can('add')?`<button class="abtn abtn-p" onclick="openTagihanModal()">+ Manual</button>`:''}
+    </div>
+  </div>
+  <div class="sg sg3" style="margin-bottom:14px">
+    <div class="stCard" style="border-left:3px solid var(--g)"><div style="font-size:11px;color:var(--ink3);margin-bottom:4px">✅ Terkumpul</div><div style="font-size:20px;font-weight:800;color:var(--g)">Rp ${fmt(lunas)}</div></div>
+    <div class="stCard" style="border-left:3px solid var(--a)"><div style="font-size:11px;color:var(--ink3);margin-bottom:4px">⏳ Pending</div><div style="font-size:20px;font-weight:800;color:var(--a)">Rp ${fmt(pending)}</div></div>
+    <div class="stCard" style="border-left:3px solid var(--r)"><div style="font-size:11px;color:var(--ink3);margin-bottom:4px">⚠ Terlambat</div><div style="font-size:20px;font-weight:800;color:var(--r)">${terlmbt} tagihan</div></div>
+  </div>
+  <div class="tblWrap"><div class="tblScroll"><table>
+    <thead><tr><th>ID</th><th>Penyewa</th><th>Kamar</th><th>Periode</th><th>Jumlah</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>${tagihan.length===0?`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--ink3)">Belum ada tagihan. Klik ⚡ Generate.</td></tr>`:
+    tagihan.map(t=>{const p=penyewa.find(x=>x.id===t.id_penyewa);const km=p?kamar.find(k=>k.id===p.id_kamar):null;return`<tr>
+      <td><span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${t.id}</span></td>
+      <td><strong>${p?p.nama:t.id_penyewa}</strong></td>
+      <td><strong style="color:var(--p)">No.${km?km.nomor:'-'}</strong></td>
+      <td>${t.periode}</td>
+      <td><strong style="color:var(--g)">Rp ${fmt(t.jumlah)}</strong></td>
+      <td style="font-size:11px">${t.jatuh_tempo}</td>
+      <td><span class="${bc(t.status)}">${t.status}</span></td>
+      <td><div style="display:flex;gap:4px">
+        ${can('edit')&&t.status!=='Lunas'?`<button class="abtn abtn-g" onclick="approveTagihan('${t.id}')">✓ Lunas</button>`:''}
+        ${can('delete')?`<button class="abtn abtn-d" onclick="hapusTagihan('${t.id}')">Hapus</button>`:''}
+      </div></td></tr>`;}).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function genTagihan(){
+  const aktif=penyewa.filter(p=>p.status==='Aktif');
+  if(!aktif.length){toast('Tidak ada penyewa aktif','e');return;}
+  const per=monthNow();
+  const jt=new Date();jt.setDate(10);
+  let cnt=0;
+  aktif.forEach(p=>{
+    if(tagihan.find(t=>t.id_penyewa===p.id&&t.periode===per))return;
+    const km=kamar.find(k=>k.id===p.id_kamar);
+    tagihan.push({id:genId('PAY',tagihan),id_penyewa:p.id,periode:per,jumlah:km?km.harga:0,jatuh_tempo:jt.toISOString().split('T')[0],status:'Belum Bayar'});
+    cnt++;
+  });
+  addLog('BILLING','Generate tagihan '+per+': '+cnt+' tagihan baru');
+  saveData();renderBilling();
+  toast(cnt>0?cnt+' tagihan digenerate ⚡':'Tagihan bulan ini sudah ada',cnt>0?'s':'i');
+}
+
+function approveTagihan(id){
+  const t=tagihan.find(x=>x.id===id);
+  const p=penyewa.find(x=>x.id===t.id_penyewa);
+  tagihan=tagihan.map(x=>x.id===id?{...x,status:'Lunas'}:x);
+  addLog('APPROVAL','Tagihan '+id+' lunas — '+(p?p.nama:''));
+  saveData();renderBilling();toast('Pembayaran disetujui ✓');
+}
+
+function hapusTagihan(id){
+  showConfirm('Hapus Tagihan','Hapus tagihan '+id+'?',()=>{
+    tagihan=tagihan.filter(x=>x.id!==id);addLog('BILLING','Tagihan '+id+' dihapus');
+    saveData();renderBilling();toast('Tagihan dihapus','i');
+  });
+}
+
+function openTagihanModal(){
+  const sel=document.getElementById('mtPenyewa');
+  sel.innerHTML='<option value="">-- Pilih Penyewa --</option>';
+  penyewa.filter(p=>p.status==='Aktif').forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.nama;sel.appendChild(o);});
+  const jt=new Date();jt.setDate(10);
+  document.getElementById('mtPeriode').value=monthNow();
+  document.getElementById('mtJT').value=jt.toISOString().split('T')[0];
+  document.getElementById('mtJumlah').value='';
+  document.getElementById('mtStatus').value='Belum Bayar';
+  openModal('tagihanModal');
+}
+
+function saveTagihan(){
+  const id_penyewa=document.getElementById('mtPenyewa').value;
+  const periode=document.getElementById('mtPeriode').value;
+  const jumlah=Number(document.getElementById('mtJumlah').value);
+  const jatuh_tempo=document.getElementById('mtJT').value;
+  const status=document.getElementById('mtStatus').value;
+  if(!id_penyewa){toast('Pilih penyewa','e');return;}
+  if(!jumlah||jumlah<=0){toast('Jumlah tidak valid','e');return;}
+  tagihan.push({id:genId('PAY',tagihan),id_penyewa,periode,jumlah,jatuh_tempo,status});
+  addLog('BILLING','Tagihan manual ditambahkan');saveData();closeModal('tagihanModal');renderBilling();toast('Tagihan ditambahkan');
+}
+
+// ──────────────────────────────────────────────
+//  PENDAFTARAN (Admin)
+// ──────────────────────────────────────────────
+function renderPendaftaran(){
+  const unrev=pendingForms.filter(f=>!f.reviewed).length;
+  const pg=document.getElementById('ap-pendaftaran');
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Pendaftaran Masuk</div><div class="aSub">${pendingForms.length} total, ${unrev} menunggu review</div></div>
+  </div>
+  ${pendingForms.length===0?`
+  <div class="stCard" style="text-align:center;padding:60px 20px">
+    <div style="font-size:40px;margin-bottom:12px">📬</div>
+    <div style="font-weight:700;font-size:14px;color:var(--ink)">Belum ada formulir pendaftaran</div>
+    <div style="font-size:12px;color:var(--ink3);margin-top:6px">Formulir akan muncul di sini ketika penghuni mengisi dan mengirim pendaftaran online</div>
+    <div style="margin-top:16px;padding:12px;background:var(--mist);border-radius:8px;font-size:12px;color:var(--ink3)">Share link halaman ini ke calon penghuni agar mereka bisa mendaftar</div>
+  </div>`:
+  `<div class="tblWrap"><div class="tblScroll"><table>
+    <thead><tr><th>ID Formulir</th><th>Nama</th><th>Kamar</th><th>No HP</th><th>Tanggal Daftar</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>${pendingForms.map(f=>{const km=kamar.find(k=>k.id===f.id_kamar);return`<tr>
+      <td><span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${f.id.toString().slice(-8)}</span></td>
+      <td><strong>${f.nama}</strong></td>
+      <td><strong style="color:var(--p)">No.${km?km.nomor:'?'}</strong></td>
+      <td>${f.no_hp||'-'}</td>
+      <td style="font-size:11px">${(f.submitted_at||'').slice(0,16).replace('T',' ')||'-'}</td>
+      <td><span class="badge ${f.reviewed?'b-g':'b-y'}">${f.reviewed?'Approved':'Menunggu'}</span></td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">
+        ${!f.reviewed&&can('edit')?`<button class="abtn abtn-g" onclick="reviewFormId('${f.id}')">✓ Approve</button>`:''}
+        <button class="abtn abtn-pdf" onclick="dlFormPDF('${f.id}')">📄 PDF</button>
+        <button class="abtn abtn-wa" onclick="waFormId('${f.id}')">📲 WA</button>
+        ${can('delete')?`<button class="abtn abtn-d" onclick="delFormId('${f.id}')">Hapus</button>`:''}
+      </div></td></tr>`;}).join('')}
+    </tbody>
+  </table></div></div>`}`;
+}
+
+function reviewFormId(id){
+  const f=pendingForms.find(x=>x.id===id);
+  if(!f||f.reviewed){toast('Sudah di-approve','i');return;}
+  const km=kamar.find(k=>k.id===f.id_kamar);
+  if(!km){toast('Kamar tidak ditemukan','e');return;}
+  if(km.status!=='Kosong'){toast(`Kamar No.${km.nomor} sudah terisi!`,'e');return;}
+  if(penyewa.find(p=>p.id_kamar===f.id_kamar&&p.status==='Aktif')){toast('Double booking!','e');return;}
+
+  const newId=genId('PNY',penyewa);
+  penyewa.push({id:newId,nama:f.nama,id_kamar:f.id_kamar,no_hp:f.no_hp,ktp:f.ktp,email:f.email||'',
+    tanggal_masuk:f.tanggal_masuk,status:'Aktif',pekerjaan:f.pekerjaan||'',
+    asal:f.asal||'',kontak_darurat:f.kontak_darurat||'',kendaraan:f.kendaraan||''});
+  kamar=kamar.map(k=>k.id===f.id_kamar?{...k,status:'Terisi'}:k);
+  pendingForms=pendingForms.map(x=>x.id===id?{...x,reviewed:true}:x);
+  addLog('FORM',f.nama+' diapprove → penyewa aktif');
+  saveData();buildNav();renderPendaftaran();
+  toast(f.nama+' berhasil diapprove & ditambahkan sebagai penyewa ✓');
+}
+
+function dlFormPDF(id){
+  const f=pendingForms.find(x=>x.id===id);
+  if(!f){toast('Formulir tidak ditemukan','e');return;}
+  try{
+    const doc=genPDF(f);
+    doc.save(`Formulir_${f.nama.replace(/\s+/g,'_')}_${today()}.pdf`);
+    addLog('EXPORT','Formulir PDF '+f.nama+' didownload');saveData();toast('📥 PDF berhasil didownload');
+  }catch(e){console.error(e);toast('Gagal generate PDF','e');}
+}
+
+function waFormId(id){
+  const f=pendingForms.find(x=>x.id===id);
+  if(!f)return;
+  const km=kamar.find(k=>k.id===f.id_kamar);
+  const no=(f.no_hp||'').replace(/[^0-9]/g,'');
+  const waNo=no.startsWith('0')?'62'+no.slice(1):no;
+  const siteUrl=window.location.href.split('#')[0];
+  const msg=`*Konfirmasi Pendaftaran Kost Garcia Putri* 🏠\n\nHalo, *${f.nama}*!\n\nFormulir pendaftaran Anda telah kami terima.\n\n📋 *Detail:*\n• Kamar: No.${km?km.nomor:'-'} (${km?km.tipe:'-'})\n• Harga: Rp ${km?fmt(km.harga):'-'}/bulan\n• ID Formulir: ${f.id.toString().slice(-8)}\n\n${f.reviewed?'✅ Status: APPROVED — Silakan check-in sesuai tanggal yang disepakati.':'⏳ Status: Menunggu konfirmasi pengelola.'}\n\n📄 Download formulir: ${siteUrl}\n\n📍 Jl. HML Abdul Syukur No.5, Rawabuntu, Serpong, Tangerang Selatan\n\n_Pengelola Kost Garcia Putri_`;
+  window.open(`https://wa.me/${waNo}?text=${encodeURIComponent(msg)}`,'_blank');
+  toast('📲 Membuka WhatsApp...');
+}
+
+function delFormId(id){
+  const f=pendingForms.find(x=>x.id===id);
+  showConfirm('Hapus Formulir','Hapus formulir dari '+f.nama+'?',()=>{
+    pendingForms=pendingForms.filter(x=>x.id!==id);
+    addLog('FORM','Formulir '+f.nama+' dihapus');saveData();buildNav();renderPendaftaran();toast('Formulir dihapus','i');
+  });
+}
+
+// ──────────────────────────────────────────────
+//  TATA TERTIB (Admin view)
+// ──────────────────────────────────────────────
+function renderTatatertib(){
+  const pg=document.getElementById('ap-tatatertib');
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Tata Tertib Penghuni</div><div class="aSub">Dokumen resmi Kost Garcia Putri</div></div>
+    <button class="abtn abtn-p" onclick="window.print()">🖨 Cetak</button>
+  </div>
+  <div class="stCard" style="max-width:760px">
+    <div style="text-align:center;padding-bottom:16px;margin-bottom:16px;border-bottom:2px solid var(--p)">
+      <div style="font-size:11px;font-weight:700;color:var(--p);letter-spacing:2px;margin-bottom:6px">DOKUMEN RESMI</div>
+      <div style="font-family:var(--serif);font-size:22px;color:var(--ink)">TATA TERTIB PENGHUNI</div>
+      <div style="font-family:var(--serif);font-size:16px;color:var(--p);margin-top:2px">KOST GARCIA PUTRI</div>
+      <div style="font-size:11.5px;color:var(--ink3);margin-top:6px;line-height:1.6">Jl. HML Abdul Syukur No.5 RT.001/001, Kel. Rawabuntu, Kec. Serpong<br>Kota Tangerang Selatan 15318</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--a2);border-radius:8px;font-size:12px;color:#78350f;margin-bottom:18px;line-height:1.6">
+      📌 Berlaku bagi seluruh penghuni Kost Garcia Putri. <strong>Wajib dipatuhi tanpa pengecualian</strong> demi menjaga keamanan, kenyamanan, dan ketertiban bersama.
+    </div>
+    ${TT.map((bab,i)=>`
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--mist2);border-radius:8px;margin-bottom:9px">
+        <span style="width:22px;height:22px;background:var(--p);border-radius:5px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${i+1}</span>
+        <span style="font-weight:700;font-size:12.5px;color:var(--p)">${bab.bab}</span>
+      </div>
+      <ol style="padding-left:20px;margin:0">${bab.isi.map(item=>`<li style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:5px;padding-left:4px">${item}</li>`).join('')}</ol>
+    </div>`).join('')}
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:20px;line-height:1.7">Dengan menempati <strong>Kost Garcia Putri</strong>, penghuni menyatakan telah membaca, memahami, dan menyetujui seluruh tata tertib di atas.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div><div style="font-size:10.5px;color:var(--ink3);margin-bottom:4px">Penghuni</div><div style="border-bottom:1px solid var(--border);height:44px;margin-bottom:4px"></div><div style="font-size:10.5px;color:var(--ink3)">Nama: _______________________</div></div>
+        <div><div style="font-size:10.5px;color:var(--ink3);margin-bottom:4px">Pengelola / Pemilik</div><div style="border-bottom:1px solid var(--border);height:44px;margin-bottom:4px"></div><div style="font-size:10.5px;color:var(--ink3)">Nama: _______________________</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────
+//  LOGS
+// ──────────────────────────────────────────────
+function renderLogs(){
+  const pg=document.getElementById('ap-logs');
+  const types=['ALL','LOGIN','LOGOUT','KAMAR','PENYEWA','BILLING','APPROVAL','FORM','ERROR','EXPORT','RESET'];
+  const filtered=logFilter==='ALL'?logs:logs.filter(l=>l.j===logFilter);
+  pg.innerHTML=`
+  <div class="aHeader">
+    <div class="aTitleGroup"><div class="aTitle">Log Aktivitas</div><div class="aSub">${logs.length} total entri</div></div>
+    ${can('reset')?`<button class="abtn abtn-d" onclick="clearLogs()">🗑 Hapus Log</button>`:''}
+  </div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px">
+    ${types.map(t=>`<button class="filterBtn${logFilter===t?' on':''}" onclick="setLogFilter('${t}')">${t}</button>`).join('')}
+  </div>
+  <div class="tblWrap"><div class="tblScroll"><table>
+    <thead><tr><th>Waktu</th><th>Tipe</th><th>Keterangan</th><th>Oleh</th></tr></thead>
+    <tbody>${filtered.length===0?`<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--ink3)">Tidak ada log</td></tr>`:
+    filtered.map(l=>`<tr>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--ink3);white-space:nowrap">${l.ts}</td>
+      <td><span class="logBadge" style="${lbs(l.j)}">${l.j}</span></td>
+      <td style="color:var(--ink2)">${l.m}</td>
+      <td style="font-size:10.5px;color:var(--ink3)">${l.u}</td></tr>`).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+function setLogFilter(f){logFilter=f;renderLogs();}
+function clearLogs(){
+  showConfirm('Hapus Log','Hapus semua log?',()=>{
+    logs=[];addLog('RESET','Log dibersihkan');saveData();renderLogs();toast('Log dihapus','i');
+  });
+}
+
+// ──────────────────────────────────────────────
+//  SETTINGS
+// ──────────────────────────────────────────────
+function renderSettings(){
+  if(!can('settings')&&!can('export')){document.getElementById('ap-settings').innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3)">Tidak ada akses pengaturan.</div>';return;}
+  document.getElementById('ap-settings').innerHTML=`
+  <div class="aHeader"><div class="aTitleGroup"><div class="aTitle">Pengaturan Sistem</div><div class="aSub">Konfigurasi Kost Garcia Putri</div></div></div>
+  <div class="settGrid">
+    <div class="settCard">
+      <div class="settTitle">Logo Kost</div>
+      <div class="settSub">Tampil di sidebar, login, dan halaman utama</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div id="logoPreview" style="width:72px;height:72px;border-radius:16px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;background:var(--mist);flex-shrink:0">
+          ${customLogo?`<img src="${customLogo}" style="width:100%;height:100%;object-fit:cover">`:'🏠'}
+        </div>
+        <div>
+          <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(event)">
+          <button class="abtn abtn-p" onclick="document.getElementById('logoInput').click()">📸 Upload</button>
+          ${customLogo?`<div style="margin-top:8px"><button class="abtn abtn-d" onclick="removeLogo()">Hapus Logo</button></div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="settCard">
+      <div class="settTitle">Informasi Kost</div>
+      <div class="settSub">Detail properti</div>
+      <div class="iRow"><span style="color:var(--ink3)">Nama</span><strong>Kost Garcia Putri</strong></div>
+      <div class="iRow"><span style="color:var(--ink3)">Kota</span><span>Tangerang Selatan 15318</span></div>
+      <div class="iRow"><span style="color:var(--ink3)">Total Kamar</span><strong>${kamar.length} unit</strong></div>
+      <div class="iRow"><span style="color:var(--ink3)">Penyewa Aktif</span><strong>${penyewa.filter(p=>p.status==='Aktif').length} orang</strong></div>
+      <div class="iRow"><span style="color:var(--ink3)">Penyimpanan</span><strong style="color:var(--g)">✓ localStorage</strong></div>
+    </div>
+    <div class="settCard">
+      <div class="settTitle">Integrasi Cloud</div>
+      <div class="settSub">Google Workspace</div>
+      <a href="https://docs.google.com/spreadsheets/d/${/* spreadsheet id */'1OVtuiMOwdYEpcFL5PVUTxaVG5vioXydGg4NMI5TjG4c'}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f0fdf4;border:1px solid var(--g3);border-radius:9px;text-decoration:none;margin-bottom:8px;transition:all .15s" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform=''">
+        <span style="font-size:20px">📊</span><div><div style="font-size:12px;font-weight:700;color:var(--g)">Google Spreadsheet</div><div style="font-size:10px;color:var(--ink3)">Database utama kost</div></div>
+      </a>
+      <a href="https://drive.google.com/drive/folders/17fcLflQxqP3GMJoIOTlrEjyT6S9bCwZA" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--mist2);border:1px solid var(--mist3);border-radius:9px;text-decoration:none;transition:all .15s" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform=''">
+        <span style="font-size:20px">📁</span><div><div style="font-size:12px;font-weight:700;color:var(--p)">Google Drive</div><div style="font-size:10px;color:var(--ink3)">Folder backup & dokumen</div></div>
+      </a>
+      ${can('export')?`<button onclick="exportJSON()" style="width:100%;margin-top:8px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fdf4ff;border:1px solid #e9d5ff;border-radius:9px;cursor:pointer;font-family:var(--sans);transition:all .15s" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform=''"><span style="font-size:20px">💾</span><div style="text-align:left"><div style="font-size:12px;font-weight:700;color:#7e22ce">Export JSON</div><div style="font-size:10px;color:var(--ink3)">Backup semua data</div></div></button>`:''}
+    </div>
+    <div class="settCard">
+      <div class="settTitle">Hak Akses</div>
+      <div class="settSub">Izin per tingkat pengguna</div>
+      ${Object.entries(PERMS).map(([role,perms])=>`
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-radius:8px;background:var(--mist);margin-bottom:6px">
+        <span style="font-size:16px">${RI[role]}</span>
+        <div><div style="font-size:12px;font-weight:700;color:var(--ink);text-transform:capitalize;margin-bottom:3px">${role}</div>
+        <div>${perms.map(p=>`<span class="permTag">${p}</span>`).join('')}</div></div>
+      </div>`).join('')}
+    </div>
+    ${can('reset')?`
+    <div class="settCard" style="grid-column:1/-1">
+      <div class="settTitle">🔑 Ganti Password Akun</div>
+      <div class="settSub">Ubah password akun. Password baru akan disimpan sebagai hash SHA-256 terenkripsi.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
+        <div>
+          <label class="mLabel" style="font-size:10px;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px;text-transform:uppercase">Pilih Akun</label>
+          <select class="mSelect" id="pwUser" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--mist);outline:none">
+            <option value="owner">👑 owner</option>
+            <option value="admin">🔧 admin</option>
+            <option value="petugas">👤 petugas</option>
+          </select>
+        </div>
+        <div>
+          <label class="mLabel" style="font-size:10px;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px;text-transform:uppercase">Password Baru</label>
+          <input class="mInput" type="password" id="pwNew" placeholder="Min 8 karakter" autocomplete="new-password" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--mist);outline:none">
+        </div>
+        <div>
+          <label class="mLabel" style="font-size:10px;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px;text-transform:uppercase">Konfirmasi Password</label>
+          <input class="mInput" type="password" id="pwConfirm" placeholder="Ketik ulang password" autocomplete="new-password" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--mist);outline:none">
+        </div>
+      </div>
+      <button class="abtn abtn-p" onclick="gantiPassword()">🔑 Simpan Password Baru</button>
+      <div style="margin-top:10px;padding:10px 14px;background:var(--mist2);border-radius:8px;font-size:11.5px;color:var(--ink3);line-height:1.6">
+        💡 Password tersimpan terenkripsi SHA-256. Setelah disimpan, refresh halaman dan login ulang dengan password baru.
+      </div>
+    </div>`:''}
+    ${can('reset')?`
+    <div class="settCard dangerZone" style="grid-column:1/-1">
+      <div class="settTitle" style="color:var(--r)">⚠ Danger Zone</div>
+      <div class="settSub">Aksi tidak dapat dibatalkan</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="abtn abtn-d" onclick="resetAll()">🗑 Reset Semua Data</button>
+        <button class="abtn" style="background:var(--a2);color:var(--a);border:1px solid #fde68a" onclick="resetKamar()">↺ Reset Kamar</button>
+        <button class="abtn" style="background:var(--a2);color:var(--a);border:1px solid #fde68a" onclick="resetPenyewa()">↺ Reset Penyewa</button>
+        <button class="abtn" style="background:var(--a2);color:var(--a);border:1px solid #fde68a" onclick="resetTagihan()">↺ Reset Tagihan</button>
+        <button class="abtn abtn-d" onclick="clearStorage()">💥 Hapus dari Browser</button>
+      </div>
+    </div>`:''}
+  </div>`;
+}
+
+async function gantiPassword(){
+  const u=document.getElementById('pwUser').value;
+  const np=document.getElementById('pwNew').value;
+  const cp=document.getElementById('pwConfirm').value;
+  if(!np||np.length<8){toast('Password minimal 8 karakter','e');return;}
+  if(np!==cp){toast('Konfirmasi password tidak cocok','e');return;}
+  const hashed=await sha256(np);
+  // Simpan hash baru ke localStorage (persisten per browser)
+  const pwKey='kgp_pw_'+u;
+  localStorage.setItem(pwKey,hashed);
+  // Update runtime USERS array
+  const usr=USERS.find(x=>x.u===u);
+  if(usr){usr.h=hashed;}
+  addLog('SETTINGS','Password akun '+u+' diubah');saveData();
+  document.getElementById('pwNew').value='';document.getElementById('pwConfirm').value='';
+  toast('✅ Password '+u+' berhasil diubah!');
+}
+
+// Load custom passwords from localStorage on init
+function loadCustomPasswords(){
+  USERS.forEach(u=>{
+    const saved=localStorage.getItem('kgp_pw_'+u.u);
+    if(saved)u.h=saved;
+  });
+}
+
+function handleLogo(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{customLogo=ev.target.result;applyLogo('sbLogoEl');applyLogo('homeLogoEl');applyLogo('alLogoEl');saveData();addLog('SETTINGS','Logo diubah');toast('Logo berhasil diupload');renderSettings();};
+  r.readAsDataURL(file);
+}
+function removeLogo(){customLogo=null;['sbLogoEl','homeLogoEl','alLogoEl','fNavLogoEl'].forEach(applyLogo);saveData();addLog('SETTINGS','Logo dihapus');toast('Logo dihapus','i');renderSettings();}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({kost:'Kost Garcia Putri',exported:new Date().toISOString(),kamar,penyewa,tagihan},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`KGP_${today()}.json`;a.click();
+  addLog('EXPORT','Data diekspor JSON');saveData();toast('Data diekspor ✓');
+}
+function resetAll(){showConfirm('Reset Semua','SEMUA data akan direset?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];pendingForms=[];addLog('RESET','Semua data direset');saveData();renderPage(curPage);buildNav();toast('Data direset','i');});}
+function resetKamar(){showConfirm('Reset Kamar','Reset kamar ke default?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));addLog('RESET','Kamar direset');saveData();renderPage(curPage);toast('Kamar direset','i');});}
+function resetPenyewa(){showConfirm('Reset Penyewa','Hapus semua penyewa?',()=>{penyewa=[];kamar=kamar.map(k=>({...k,status:'Kosong'}));addLog('RESET','Penyewa direset');saveData();renderPage(curPage);toast('Penyewa direset','i');});}
+function resetTagihan(){showConfirm('Reset Tagihan','Hapus semua tagihan?',()=>{tagihan=[];addLog('RESET','Tagihan direset');saveData();renderPage(curPage);toast('Tagihan direset','i');});}
+function clearStorage(){showConfirm('Hapus dari Browser','Semua data dihapus permanen dari browser?',()=>{localStorage.removeItem(SK);kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];logs=[];pendingForms=[];customLogo=null;['sbLogoEl','homeLogoEl'].forEach(applyLogo);renderPage(curPage);renderSettings();toast('Storage dihapus','i');});}
+
+// ──────────────────────────────────────────────
+//  MODAL / CONFIRM UTILS
+// ──────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+window.addEventListener('click',e=>{
+  ['kamarModal','penyewaModal','tagihanModal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(e.target===el)el.classList.remove('on');
+  });
+});
+function showConfirm(title,text,cb){
+  document.getElementById('confTitle').textContent=title;
+  document.getElementById('confText').textContent=text;
+  confirmCb=cb;
+  document.getElementById('confirmOverlay').classList.add('on');
+  document.getElementById('confYes').onclick=()=>{closeConfirm();if(confirmCb)confirmCb();};
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('on');}
+
+// ──────────────────────────────────────────────
+//  INIT
+// ──────────────────────────────────────────────
+updateHomeStats();
+updateShareLink();
+applyLogo('homeLogoEl');
+</script>
+</body>
+</html>
