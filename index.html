@@ -841,6 +841,10 @@ tr:hover td{background:var(--mist)}
         </div>
       </div>
       <div class="topActions">
+        <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--mist2);border-radius:8px;border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--ink3)">
+          <span id="cloudDot" style="color:#d97706;font-size:14px">◌</span>
+          <span id="cloudStatus">Memuat data...</span>
+        </div>
         <a href="https://docs.google.com/spreadsheets/d/1OVtuiMOwdYEpcFL5PVUTxaVG5vioXydGg4NMI5TjG4c" target="_blank" class="topLink" style="background:linear-gradient(135deg,#059669,#047857)">📊 Sheet</a>
         <a href="https://drive.google.com/drive/folders/17fcLflQxqP3GMJoIOTlrEjyT6S9bCwZA" target="_blank" class="topLink" style="background:linear-gradient(135deg,var(--p),#7c6fe0)">📁 Drive</a>
       </div>
@@ -925,8 +929,8 @@ const SK = 'kgp_v4';
 //    petugas → Petugas2025!
 // ═══════════════════════════════════════════════════════════
 const USERS = [
-  {u:'owner',   h:'56d2206b61730530a8ee4ca498396917ae49519e27a9af044e52c34687dcac26', role:'owner',   nama:'Pemilik Kost'},
-  {u:'admin',   h:'d1c5e78f38a498a51c2cc309a3139493f4659ada8b45fecd7b40b9685620c5f5', role:'admin',   nama:'Admin Garcia'},
+  {u:'owner',   h:'6de7d2847c6a31810fd943629a269e182ea142e88f65244f8a03c37c407744f2', role:'owner',   nama:'Pemilik Kost'},
+  {u:'admin',   h:'8a1caacf5dd2d0478919ac83d1b47d17cc48df3a1f98cc3a6df3f3aeb9c358a4', role:'admin',   nama:'Admin Garcia'},
   {u:'petugas', h:'1527d1afd4c44a10685f487dd971bdc2c1ff7813dcb4b0225accc83d0a250f68', role:'petugas', nama:'Petugas'},
 ];
 
@@ -997,26 +1001,170 @@ let customLogo=null;
 let kamar=[], penyewa=[], tagihan=[], logs=[], pendingForms=[];
 let formData={}, signatureImg=null, isDrawing=false, lastX=0, lastY=0;
 
-// ──────────────────────────────────────────────
-//  LOCALSTORAGE
-// ──────────────────────────────────────────────
-function saveData(){
-  try{
-    localStorage.setItem(SK,JSON.stringify({kamar,penyewa,tagihan,logs,pendingForms,customLogo,at:new Date().toISOString()}));
-    const el=document.getElementById('sbSaveTime');
-    if(el) el.textContent='Tersimpan '+new Date().toLocaleTimeString('id-ID');
-  }catch(e){}
+// ══════════════════════════════════════════════════════════════════
+//  CLOUD SYNC — Google Sheets via Apps Script
+//  Ganti GAS_URL dengan URL deployment Google Apps Script Anda
+// ══════════════════════════════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx8eOr_04P6uWGMzV_8F50i83u_7tJYJNNgxJr6zlNY9xzjFJQT8Boag6v9vedUAZ38nA/exec';
+// Contoh: 'https://script.google.com/macros/s/AKfycby.../exec'
+
+let cloudReady = false;
+let syncQueue = []; // antrian operasi saat offline
+let isSyncing = false;
+
+// ── Indikator status koneksi ──
+function setCloudStatus(status, msg) {
+  const el = document.getElementById('cloudStatus');
+  const dot = document.getElementById('cloudDot');
+  if (!el || !dot) return;
+  const map = {
+    ok:      { color: '#059669', dot: '●', text: msg || '☁ Tersimpan di Cloud' },
+    saving:  { color: '#d97706', dot: '◌', text: msg || '⏳ Menyimpan...' },
+    loading: { color: '#0284c7', dot: '◌', text: msg || '⏳ Memuat data...' },
+    offline: { color: '#dc2626', dot: '●', text: msg || '⚠ Offline — data lokal' },
+    error:   { color: '#dc2626', dot: '●', text: msg || '✕ Gagal sinkronisasi' },
+  };
+  const s = map[status] || map.offline;
+  dot.style.color = s.color;
+  dot.textContent = s.dot;
+  el.textContent = s.text;
 }
-function loadData(){
-  try{
-    const r=localStorage.getItem(SK);
-    if(r){const d=JSON.parse(r);kamar=d.kamar||[...DEF_KAMAR];penyewa=d.penyewa||[];tagihan=d.tagihan||[];logs=d.logs||[];pendingForms=d.pendingForms||[];customLogo=d.customLogo||null;return;}
-  }catch(e){}
-  kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];logs=[];pendingForms=[];customLogo=null;
+
+// ── GAS API call helper ──
+async function gasCall(method, payload) {
+  if (!GAS_URL || GAS_URL.includes('PASTE_')) {
+    // Fallback ke localStorage jika GAS belum dikonfigurasi
+    return null;
+  }
+  try {
+    if (method === 'GET') {
+      const r = await fetch(GAS_URL + '?' + new URLSearchParams(payload), { method: 'GET' });
+      return await r.json();
+    } else {
+      const r = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // avoid preflight CORS
+        body: JSON.stringify(payload),
+      });
+      return await r.json();
+    }
+  } catch (e) {
+    console.warn('GAS Error:', e);
+    return null;
+  }
 }
-loadData();
+
+// ── LOAD DATA dari Cloud (prioritas) lalu fallback ke localStorage ──
+async function loadData() {
+  // Selalu muat localStorage dulu agar UI langsung tampil (fast)
+  loadFromLocal();
+
+  if (!GAS_URL || GAS_URL.includes('PASTE_')) {
+    setCloudStatus('offline', '⚠ Cloud belum dikonfigurasi');
+    return;
+  }
+
+  setCloudStatus('loading');
+  try {
+    const d = await gasCall('GET', { action: 'load' });
+    if (d && !d.error) {
+      kamar        = d.kamar?.length        ? d.kamar        : (kamar.length ? kamar : DEF_KAMAR.map(x=>({...x})));
+      penyewa      = d.penyewa              || penyewa       || [];
+      tagihan      = d.tagihan              || tagihan       || [];
+      logs         = d.logs                 || logs          || [];
+      pendingForms = d.pendingForms         || pendingForms  || [];
+      if (d.settings?.customLogo) customLogo = d.settings.customLogo;
+      cloudReady = true;
+      saveToLocal(); // cache lokal
+      setCloudStatus('ok');
+      if(d.settings)loadCloudPasswords(d.settings);
+      // Refresh UI jika admin sudah login
+      if (session) { buildNav(); renderPage(curPage); }
+      updateHomeStats();
+      applyLogo('homeLogoEl');
+    } else {
+      throw new Error(d?.error || 'Gagal load');
+    }
+  } catch(e) {
+    cloudReady = false;
+    setCloudStatus('offline', '⚠ Offline — data dari cache');
+  }
+}
+
+// ── SAVE ALL (dipakai saat reset/export) ──
+async function saveAllToCloud() {
+  if (!cloudReady) return;
+  setCloudStatus('saving');
+  const res = await gasCall('POST', {
+    action: 'saveAll',
+    data: { kamar, penyewa, tagihan, pendingForms, logs,
+            settings: customLogo ? { customLogo } : {} }
+  });
+  if (res?.ok) { setCloudStatus('ok'); saveToLocal(); }
+  else setCloudStatus('error', '✕ Gagal simpan cloud');
+}
+
+// ── UPSERT (tambah atau update 1 record) ──
+async function cloudUpsert(sheetKey, obj) {
+  saveToLocal(); // selalu simpan lokal dulu
+  if (!cloudReady) { toast('Data disimpan lokal (offline)','i'); return; }
+  setCloudStatus('saving');
+  const res = await gasCall('POST', { action: 'upsert', sheet: sheetKey, data: obj });
+  if (res?.ok) setCloudStatus('ok');
+  else { setCloudStatus('error'); toast('Gagal sync ke cloud','e'); }
+}
+
+// ── DELETE 1 record ──
+async function cloudDelete(sheetKey, id) {
+  saveToLocal();
+  if (!cloudReady) return;
+  setCloudStatus('saving');
+  const res = await gasCall('POST', { action: 'delete', sheet: sheetKey, data: { id } });
+  if (res?.ok) setCloudStatus('ok');
+  else setCloudStatus('error');
+}
+
+// ── APPEND LOG (efisien, tanpa save semua) ──
+async function cloudLog(logObj) {
+  if (!cloudReady) return;
+  gasCall('POST', { action: 'appendLog', data: logObj }); // fire & forget
+}
+
+// ── SAVE DATA (saveData dipanggil di banyak tempat) ──
+//    Sekarang: simpan lokal DULU, sinkronisasi individual record via cloudUpsert
+function saveData() {
+  saveToLocal();
+  const el = document.getElementById('sbSaveTime');
+  if (el) el.textContent = 'Tersimpan ' + new Date().toLocaleTimeString('id-ID');
+}
+
+// ── localStorage (cache cepat) ──
+function saveToLocal() {
+  try {
+    localStorage.setItem(SK, JSON.stringify({ kamar, penyewa, tagihan, logs, pendingForms, customLogo, at: new Date().toISOString() }));
+  } catch(e) {}
+}
+function loadFromLocal() {
+  try {
+    const r = localStorage.getItem(SK);
+    if (r) {
+      const d = JSON.parse(r);
+      kamar        = d.kamar        || DEF_KAMAR.map(x=>({...x}));
+      penyewa      = d.penyewa      || [];
+      tagihan      = d.tagihan      || [];
+      logs         = d.logs         || [];
+      pendingForms = d.pendingForms || [];
+      customLogo   = d.customLogo   || null;
+      return;
+    }
+  } catch(e) {}
+  kamar = DEF_KAMAR.map(x=>({...x})); penyewa=[]; tagihan=[]; logs=[]; pendingForms=[]; customLogo=null;
+}
+
+// Inisialisasi
 loadCustomPasswords();
-setInterval(saveData,30000);
+loadData(); // async — akan load cloud lalu update UI
+setInterval(() => { if(cloudReady) saveToLocal(); }, 30000);
 
 // ──────────────────────────────────────────────
 //  HELPERS
@@ -1026,7 +1174,11 @@ const today=()=>new Date().toISOString().split('T')[0];
 const monthNow=()=>new Date().toISOString().slice(0,7);
 const can=p=>session&&(PERMS[session.role]||[]).includes(p);
 function genId(p,l){const m=l.reduce((x,r)=>{const n=parseInt((r.id||'').split('-').pop())||0;return Math.max(x,n);},0);return p+'-'+String(m+1).padStart(3,'0');}
-function addLog(j,m){logs.unshift({id:Date.now(),ts:new Date().toLocaleString('id-ID'),j,m,u:session?session.nama:'sistem'});if(logs.length>500)logs=logs.slice(0,500);}
+function addLog(j,m){
+  const entry={id:Date.now(),ts:new Date().toLocaleString('id-ID'),j,m,u:session?session.nama:'sistem'};
+  logs.unshift(entry);if(logs.length>500)logs=logs.slice(0,500);
+  cloudLog(entry); // async, fire & forget
+}
 function bc(s){const m={Terisi:'b-g',Kosong:'b-g',Maintenance:'b-y',Aktif:'b-g','Tidak Aktif':'b-r',Lunas:'b-g','Belum Bayar':'b-y','Menunggu Bukti':'b-s',Terlambat:'b-r'};return'badge '+(m[s]||'b-b');}
 function lbs(j){const m={LOGIN:'background:#e0f2fe;color:#0369a1',LOGOUT:'background:#f1f5f9;color:#475569',KAMAR:'background:var(--mist2);color:var(--p)',PENYEWA:'background:var(--g2);color:var(--g)',BILLING:'background:var(--a2);color:var(--a)',APPROVAL:'background:var(--g2);color:var(--g)',ERROR:'background:var(--r2);color:var(--r)',EXPORT:'background:#fdf4ff;color:#9333ea',RESET:'background:#fff1f2;color:#e11d48',FORM:'background:#e0f2fe;color:#0369a1',NOTIF:'background:var(--g2);color:var(--g)'};return m[j]||'background:var(--mist);color:var(--ink3)';}
 
@@ -1273,8 +1425,9 @@ function submitForm(){
   formData.submitted_at=new Date().toISOString();
   formData.reviewed=false;
 
-  pendingForms.unshift({...formData});
-  saveData();
+  const frmClean={...formData}; delete frmClean.signature; // jangan upload base64 signature ke sheets
+  pendingForms.unshift(frmClean);
+  cloudUpsert('pendingForms', frmClean);
 
   document.getElementById('successName').textContent=formData.nama;
   gotoStep(4);
@@ -1715,9 +1868,11 @@ function saveKamar(){
   if(!nomor){toast('Nomor kamar wajib diisi','e');return;}
   if(!harga||harga<=0){toast('Harga tidak valid','e');return;}
   if(!id&&kamar.find(k=>k.nomor===nomor)){toast('Nomor kamar sudah ada','e');return;}
-  if(id){kamar=kamar.map(k=>k.id===id?{...k,nomor,tipe,harga,status,keterangan}:k);addLog('KAMAR','Kamar No.'+nomor+' diupdate');}
-  else{kamar.push({id:genId('KMR',kamar),nomor,tipe,harga,status,keterangan});addLog('KAMAR','Kamar No.'+nomor+' ditambahkan');}
-  saveData();closeModal('kamarModal');renderKamar();toast('Kamar disimpan');
+  let kamarObj;
+  if(id){kamar=kamar.map(k=>k.id===id?(kamarObj={...k,nomor,tipe,harga,status,keterangan}):k);addLog('KAMAR','Kamar No.'+nomor+' diupdate');}
+  else{kamarObj={id:genId('KMR',kamar),nomor,tipe,harga,status,keterangan};kamar.push(kamarObj);addLog('KAMAR','Kamar No.'+nomor+' ditambahkan');}
+  closeModal('kamarModal');renderKamar();toast('Kamar disimpan');
+  cloudUpsert('kamar', kamarObj);
 }
 
 function hapusKamar(id){
@@ -1725,7 +1880,8 @@ function hapusKamar(id){
   if(penyewa.find(p=>p.id_kamar===id&&p.status==='Aktif')){toast('Ada penyewa aktif di kamar ini!','e');return;}
   showConfirm('Hapus Kamar','Hapus kamar No.'+k.nomor+'?',()=>{
     kamar=kamar.filter(x=>x.id!==id);addLog('KAMAR','Kamar No.'+k.nomor+' dihapus');
-    saveData();renderKamar();toast('Kamar dihapus','i');
+    renderKamar();toast('Kamar dihapus','i');
+    cloudDelete('kamar', id);
   });
 }
 
@@ -1817,15 +1973,24 @@ function savePenyewa(){
     if(status==='Tidak Aktif')kamar=kamar.map(k=>k.id===id_kamar?{...k,status:'Kosong'}:k);
     addLog('PENYEWA',nama+' diupdate');
   }
-  saveData();closeModal('penyewaModal');renderPenyewa();toast('Data penyewa disimpan');
+  closeModal('penyewaModal');renderPenyewa();toast('Data penyewa disimpan');
+  // Sync ke cloud: ambil record yang baru disimpan
+  const savedPny=penyewa.find(p=>p.id===(id||penyewa.find(p2=>p2.nama===nama&&p2.id_kamar===id_kamar)?.id));
+  if(savedPny)cloudUpsert('penyewa',savedPny);
+  // Juga update status kamar
+  const km2sync=kamar.find(k=>k.id===id_kamar);
+  if(km2sync)cloudUpsert('kamar',km2sync);
 }
 
 function hapusPenyewa(id){
   const p=penyewa.find(x=>x.id===id);
   showConfirm('Hapus Penyewa','Hapus penyewa '+p.nama+'?',()=>{
     penyewa=penyewa.filter(x=>x.id!==id);
+    const km4del=kamar.find(k=>k.id===p.id_kamar);
     kamar=kamar.map(k=>k.id===p.id_kamar?{...k,status:'Kosong'}:k);
-    addLog('PENYEWA',p.nama+' dihapus');saveData();renderPenyewa();toast('Penyewa dihapus','i');
+    addLog('PENYEWA',p.nama+' dihapus');renderPenyewa();toast('Penyewa dihapus','i');
+    cloudDelete('penyewa', id);
+    if(km4del)cloudUpsert('kamar', {...km4del,status:'Kosong'});
   });
 }
 
@@ -1909,15 +2074,18 @@ function genTagihan(){
 function approveTagihan(id){
   const t=tagihan.find(x=>x.id===id);
   const p=penyewa.find(x=>x.id===t.id_penyewa);
-  tagihan=tagihan.map(x=>x.id===id?{...x,status:'Lunas'}:x);
+  let tObj;
+  tagihan=tagihan.map(x=>x.id===id?(tObj={...x,status:'Lunas'}):x);
   addLog('APPROVAL','Tagihan '+id+' lunas — '+(p?p.nama:''));
-  saveData();renderBilling();toast('Pembayaran disetujui ✓');
+  renderBilling();toast('Pembayaran disetujui ✓');
+  if(tObj)cloudUpsert('tagihan',tObj);
 }
 
 function hapusTagihan(id){
   showConfirm('Hapus Tagihan','Hapus tagihan '+id+'?',()=>{
     tagihan=tagihan.filter(x=>x.id!==id);addLog('BILLING','Tagihan '+id+' dihapus');
-    saveData();renderBilling();toast('Tagihan dihapus','i');
+    renderBilling();toast('Tagihan dihapus','i');
+    cloudDelete('tagihan', id);
   });
 }
 
@@ -1941,8 +2109,10 @@ function saveTagihan(){
   const status=document.getElementById('mtStatus').value;
   if(!id_penyewa){toast('Pilih penyewa','e');return;}
   if(!jumlah||jumlah<=0){toast('Jumlah tidak valid','e');return;}
-  tagihan.push({id:genId('PAY',tagihan),id_penyewa,periode,jumlah,jatuh_tempo,status});
-  addLog('BILLING','Tagihan manual ditambahkan');saveData();closeModal('tagihanModal');renderBilling();toast('Tagihan ditambahkan');
+  const tObj={id:genId('PAY',tagihan),id_penyewa,periode,jumlah,jatuh_tempo,status};
+  tagihan.push(tObj);
+  addLog('BILLING','Tagihan manual ditambahkan');closeModal('tagihanModal');renderBilling();toast('Tagihan ditambahkan');
+  cloudUpsert('tagihan', tObj);
 }
 
 // ──────────────────────────────────────────────
@@ -1995,8 +2165,13 @@ function reviewFormId(id){
     asal:f.asal||'',kontak_darurat:f.kontak_darurat||'',kendaraan:f.kendaraan||''});
   kamar=kamar.map(k=>k.id===f.id_kamar?{...k,status:'Terisi'}:k);
   pendingForms=pendingForms.map(x=>x.id===id?{...x,reviewed:true}:x);
+  const newPny=penyewa.find(p=>p.id===newId);
+  const newKm=kamar.find(k=>k.id===f.id_kamar);
   addLog('FORM',f.nama+' diapprove → penyewa aktif');
-  saveData();buildNav();renderPendaftaran();
+  buildNav();renderPendaftaran();
+  if(newPny)cloudUpsert('penyewa',newPny);
+  if(newKm)cloudUpsert('kamar',newKm);
+  cloudUpsert('pendingForms',{...f,reviewed:true});
   toast(f.nama+' berhasil diapprove & ditambahkan sebagai penyewa ✓');
 }
 
@@ -2130,7 +2305,8 @@ function renderSettings(){
       <div class="iRow"><span style="color:var(--ink3)">Kota</span><span>Tangerang Selatan 15318</span></div>
       <div class="iRow"><span style="color:var(--ink3)">Total Kamar</span><strong>${kamar.length} unit</strong></div>
       <div class="iRow"><span style="color:var(--ink3)">Penyewa Aktif</span><strong>${penyewa.filter(p=>p.status==='Aktif').length} orang</strong></div>
-      <div class="iRow"><span style="color:var(--ink3)">Penyimpanan</span><strong style="color:var(--g)">✓ localStorage</strong></div>
+      <div class="iRow"><span style="color:var(--ink3)">Cloud</span><strong style="color:var(--g)">${cloudReady?'✓ Google Sheets Aktif':'⚠ Offline'}</strong></div>
+      <div class="iRow"><span style="color:var(--ink3)">Cache Lokal</span><strong style="color:var(--sky)">✓ localStorage</strong></div>
     </div>
     <div class="settCard">
       <div class="settTitle">Integrasi Cloud</div>
@@ -2205,6 +2381,8 @@ async function gantiPassword(){
   // Simpan hash baru ke localStorage (persisten per browser)
   const pwKey='kgp_pw_'+u;
   localStorage.setItem(pwKey,hashed);
+  // Juga simpan ke cloud agar berlaku di semua perangkat
+  gasCall('POST',{action:'upsert',sheet:'settings',data:{key:pwKey,value:hashed}});
   // Update runtime USERS array
   const usr=USERS.find(x=>x.u===u);
   if(usr){usr.h=hashed;}
@@ -2213,30 +2391,55 @@ async function gantiPassword(){
   toast('✅ Password '+u+' berhasil diubah!');
 }
 
-// Load custom passwords from localStorage on init
+// Load custom passwords dari localStorage (sinkron) dan cloud (async)
 function loadCustomPasswords(){
   USERS.forEach(u=>{
     const saved=localStorage.getItem('kgp_pw_'+u.u);
     if(saved)u.h=saved;
   });
 }
+async function loadCloudPasswords(settings){
+  if(!settings)return;
+  USERS.forEach(u=>{
+    const k='kgp_pw_'+u.u;
+    if(settings[k]){
+      u.h=settings[k];
+      localStorage.setItem(k,settings[k]); // cache lokal
+    }
+  });
+}
 
 function handleLogo(e){
   const file=e.target.files[0];if(!file)return;
   const r=new FileReader();
-  r.onload=ev=>{customLogo=ev.target.result;applyLogo('sbLogoEl');applyLogo('homeLogoEl');applyLogo('alLogoEl');saveData();addLog('SETTINGS','Logo diubah');toast('Logo berhasil diupload');renderSettings();};
+  r.onload=ev=>{customLogo=ev.target.result;applyLogo('sbLogoEl');applyLogo('homeLogoEl');applyLogo('alLogoEl');saveToLocal();addLog('SETTINGS','Logo diubah');toast('Logo berhasil diupload');renderSettings();
+    // Simpan URL logo ke cloud settings (jika logo base64 terlalu besar, skip)
+    if(customLogo&&customLogo.length<500000){gasCall('POST',{action:'upsert',sheet:'settings',data:{key:'customLogo',value:customLogo}});}
+  };
   r.readAsDataURL(file);
 }
-function removeLogo(){customLogo=null;['sbLogoEl','homeLogoEl','alLogoEl','fNavLogoEl'].forEach(applyLogo);saveData();addLog('SETTINGS','Logo dihapus');toast('Logo dihapus','i');renderSettings();}
+function removeLogo(){customLogo=null;['sbLogoEl','homeLogoEl','alLogoEl','fNavLogoEl'].forEach(applyLogo);saveToLocal();addLog('SETTINGS','Logo dihapus');toast('Logo dihapus','i');renderSettings();}
 function exportJSON(){
-  const blob=new Blob([JSON.stringify({kost:'Kost Garcia Putri',exported:new Date().toISOString(),kamar,penyewa,tagihan},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({kost:'Kost Garcia Putri',exported:new Date().toISOString(),kamar,penyewa,tagihan,pendingForms},null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`KGP_${today()}.json`;a.click();
-  addLog('EXPORT','Data diekspor JSON');saveData();toast('Data diekspor ✓');
+  addLog('EXPORT','Data diekspor JSON');saveToLocal();toast('Data diekspor ✓');
 }
-function resetAll(){showConfirm('Reset Semua','SEMUA data akan direset?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];pendingForms=[];addLog('RESET','Semua data direset');saveData();renderPage(curPage);buildNav();toast('Data direset','i');});}
-function resetKamar(){showConfirm('Reset Kamar','Reset kamar ke default?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));addLog('RESET','Kamar direset');saveData();renderPage(curPage);toast('Kamar direset','i');});}
-function resetPenyewa(){showConfirm('Reset Penyewa','Hapus semua penyewa?',()=>{penyewa=[];kamar=kamar.map(k=>({...k,status:'Kosong'}));addLog('RESET','Penyewa direset');saveData();renderPage(curPage);toast('Penyewa direset','i');});}
-function resetTagihan(){showConfirm('Reset Tagihan','Hapus semua tagihan?',()=>{tagihan=[];addLog('RESET','Tagihan direset');saveData();renderPage(curPage);toast('Tagihan direset','i');});}
+
+async function manualSync(){
+  toast('🔄 Memuat ulang dari Google Sheets...','i');
+  cloudReady=false;
+  await loadData();
+  if(cloudReady){
+    renderPage(curPage);buildNav();updateHomeStats();
+    toast('✅ Data berhasil disinkronkan dari cloud!');
+  } else {
+    toast('⚠ Gagal terhubung ke cloud. Cek koneksi internet.','e');
+  }
+}
+function resetAll(){showConfirm('Reset Semua','SEMUA data akan direset?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];pendingForms=[];addLog('RESET','Semua data direset');saveAllToCloud();renderPage(curPage);buildNav();toast('Data direset','i');});}
+function resetKamar(){showConfirm('Reset Kamar','Reset kamar ke default?',()=>{kamar=DEF_KAMAR.map(x=>({...x}));addLog('RESET','Kamar direset');saveAllToCloud();renderPage(curPage);toast('Kamar direset','i');});}
+function resetPenyewa(){showConfirm('Reset Penyewa','Hapus semua penyewa?',()=>{penyewa=[];kamar=kamar.map(k=>({...k,status:'Kosong'}));addLog('RESET','Penyewa direset');saveAllToCloud();renderPage(curPage);toast('Penyewa direset','i');});}
+function resetTagihan(){showConfirm('Reset Tagihan','Hapus semua tagihan?',()=>{tagihan=[];addLog('RESET','Tagihan direset');saveAllToCloud();renderPage(curPage);toast('Tagihan direset','i');});}
 function clearStorage(){showConfirm('Hapus dari Browser','Semua data dihapus permanen dari browser?',()=>{localStorage.removeItem(SK);kamar=DEF_KAMAR.map(x=>({...x}));penyewa=[];tagihan=[];logs=[];pendingForms=[];customLogo=null;['sbLogoEl','homeLogoEl'].forEach(applyLogo);renderPage(curPage);renderSettings();toast('Storage dihapus','i');});}
 
 // ──────────────────────────────────────────────
